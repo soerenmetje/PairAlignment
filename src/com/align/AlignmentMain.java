@@ -4,8 +4,13 @@ import com.align.argparser.ArgumentParser;
 import com.align.argparser.ArgumentParserException;
 import com.align.argparser.ParameterSet;
 import com.align.argparser.Setting;
+import com.align.fastaparser.FastaParser;
+import com.align.fastaparser.FastaParserException;
+import com.align.fastaparser.Sequence;
 
+import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.util.List;
 
 public class AlignmentMain {
 
@@ -19,8 +24,10 @@ public class AlignmentMain {
         // set up Parameter
         ParameterSet parameterSet = new ParameterSet();
         Setting paramFilePath = new Setting("file", true);
+        Setting paramFilePathSub = new Setting("filesub", true);
         Setting paramGap = new Setting("gap", true);
         parameterSet.addSetting(paramFilePath);
+        parameterSet.addSetting(paramFilePathSub);
         parameterSet.addSetting(paramGap);
 
         try {
@@ -43,8 +50,8 @@ public class AlignmentMain {
         }
 
         try {
-            substiMatrix = SubstiMatrixParser.parseFile(paramFilePath.getValue());
-        } catch (IOException e) {
+            substiMatrix = SubstiMatrixParser.parseFile(paramFilePathSub.getValue());
+        } catch (IOException | IllegalArgumentException e) {
             System.err.println("ERROR: while parsing substitution matrix " + e.getMessage());
             System.exit(1);
         }
@@ -61,12 +68,49 @@ public class AlignmentMain {
             }
             System.out.println(out.toString());
         }
+
+        Sequence sequenceOne = null, sequenceTwo = null;
+        {
+            String filePath = paramFilePath.getValue();
+            List<Sequence> sequences = readFile(filePath);
+            int seqCount = sequences.size();
+            if (seqCount != 2) {
+                System.err.println("ERROR: file " + filePath + " contains " + seqCount + " instead of 2 Sequences");
+                System.exit(1);
+            }
+            sequenceOne = sequences.get(0);
+            sequenceTwo = sequences.get(1);
+        }
+
+        //TODO implement Alignment
+
+
+    }
+
+    private static List<Sequence> readFile(String filePath) {
+        List<Sequence> ret = null;
+
+        System.out.println("reading " + filePath);
+        try {
+            ret = FastaParser.parseFile(filePath);
+        } catch (FileNotFoundException e) {
+            System.err.println("ERROR: file " + filePath + " not found");
+            System.exit(1);
+        } catch (IOException e) {
+            System.err.println("ERROR: while reading file " + filePath);
+            System.exit(1);
+        } catch (FastaParserException e) {
+            System.err.println("ERROR: while parsing file " + filePath + ": " + e.getMessage());
+            System.exit(1);
+        }
+
+        System.out.println("successfully finished reading file");
+        return ret;
     }
 
     public static int aminoToIndex(char amino) {
         return charToIndex(AMIN, amino);
     }
-
 
     /**
      * mappt Beaobachtung-Folge auf entsprechende Index-Folge
