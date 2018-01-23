@@ -8,11 +8,14 @@ import com.align.fastaparser.FastaParser;
 import com.align.fastaparser.FastaParserException;
 import com.align.fastaparser.Sequence;
 
+import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.util.List;
 
 public class AlignmentMain {
+
+    public static final String OUTPUT_FILE_NAME = "aligned.fasta";
 
     public static final char[] AMIN = new char[]{'W', 'V', 'T', 'S', 'R', 'Q', 'P', 'Y', 'G', 'F', 'E', 'D', 'C', 'A', 'N', 'M', 'L', 'K', 'I', 'H'};
     public static final int AMIN_COUNT = AMIN.length;
@@ -69,9 +72,9 @@ public class AlignmentMain {
             System.out.println(out.toString());
         }
 
+        String filePath = paramFilePath.getValue();
         Sequence sequenceOne = null, sequenceTwo = null;
         {
-            String filePath = paramFilePath.getValue();
             List<Sequence> sequences = readFile(filePath);
             int seqCount = sequences.size();
             if (seqCount != 2) {
@@ -82,9 +85,16 @@ public class AlignmentMain {
             sequenceTwo = sequences.get(1);
         }
 
-        //TODO implement Alignment
+        List<Sequence> alignedSeq = Alignment.alginSequences(sequenceOne, sequenceTwo);
+        {
+            File file = new File(filePath);
+            saveToFile(file.getParent(), OUTPUT_FILE_NAME, alignedSeq);
+        }
 
+    }
 
+    private static void saveToFile(String filePath, String fileName, List<Sequence> sequences) {
+        //TODO implement
     }
 
     private static List<Sequence> readFile(String filePath) {
