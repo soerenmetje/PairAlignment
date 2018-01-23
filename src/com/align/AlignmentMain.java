@@ -123,7 +123,7 @@ public class AlignmentMain {
     }
 
     /**
-     * mappt Beaobachtung-Folge auf entsprechende Index-Folge
+     * Mappt Beaobachtung-Folge auf entsprechende Index-Folge
      *
      * @param space        Feld aller Beobachtungen
      * @param observations Beobachtungs-Folge
@@ -141,7 +141,7 @@ public class AlignmentMain {
     }
 
     /**
-     * mappt Beaobachtung auf entsprechenden Index
+     * Mappt Beaobachtung auf entsprechenden Index
      *
      * @param space       Feld aller Beobachtungen
      * @param observation Beobachtung
