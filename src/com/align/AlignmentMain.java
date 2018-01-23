@@ -20,7 +20,6 @@ public class AlignmentMain {
     public static final char[] AMIN = new char[]{'W', 'V', 'T', 'S', 'R', 'Q', 'P', 'Y', 'G', 'F', 'E', 'D', 'C', 'A', 'N', 'M', 'L', 'K', 'I', 'H'};
     public static final int AMIN_COUNT = AMIN.length;
 
-    private static int gapPenalty;
     private static int[][] substiMatrix;
 
     public static void main(String[] args) {
@@ -41,13 +40,14 @@ public class AlignmentMain {
             System.exit(1);
         }
 
+        int gapPenalty = 0;
         try {
             gapPenalty = Integer.parseInt(paramGap.getValue());
         } catch (NumberFormatException e) {
             System.err.println("ERROR: GapPenalty is no Number");
             System.exit(1);
         }
-        if (gapPenalty < 0) {
+        if (gapPenalty <= 0) {
             System.err.println("ERROR: GapPenalty should be a positive number");
             System.exit(1);
         }
@@ -85,7 +85,7 @@ public class AlignmentMain {
             sequenceTwo = sequences.get(1);
         }
 
-        List<Sequence> alignedSeq = Alignment.alginSequences(sequenceOne, sequenceTwo);
+        List<Sequence> alignedSeq = Alignment.alginSequences(sequenceOne, sequenceTwo, gapPenalty);
         {
             File file = new File(filePath);
             saveToFile(file.getParent(), OUTPUT_FILE_NAME, alignedSeq);

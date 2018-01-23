@@ -7,7 +7,7 @@ import java.util.List;
 
 public class Alignment {
 
-    public static List<Sequence> alginSequences(final Sequence one, final Sequence two) {
+    public static List<Sequence> alginSequences(final Sequence one, final Sequence two, int gapPanelty) {
         final List<Sequence> alignedSeq = new ArrayList<>(2);
 
         String nucleotideSeqOne = one.getNucleotideSequence();
