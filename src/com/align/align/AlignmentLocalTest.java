@@ -7,27 +7,15 @@ import org.junit.runners.Parameterized;
 import java.util.Arrays;
 import java.util.Collection;
 
-import static org.junit.runners.Parameterized.Parameter;
 import static org.junit.runners.Parameterized.Parameters;
 
 /**
- * Test-Klasse fuer {@link Alignment}.
+ * Test-Klasse fuer das locale Alignment der Klasse {@link Alignment}.
  *
  * @author Soeren Metje
  */
 @RunWith(Parameterized.class)
-public class AlignmentLocalTest {
-
-    @Parameter(0)
-    public String seqOne;
-    @Parameter(1)
-    public String seqTwo;
-    @Parameter(2)
-    public String resultOne;
-    @Parameter(3)
-    public String resultTwo;
-    @Parameter(4)
-    public int gapPenalty;
+public class AlignmentLocalTest extends AlignmentTestTemplate {
 
     @Parameters
     public static Collection<Object[]> data() {
@@ -44,11 +32,11 @@ public class AlignmentLocalTest {
 
     @Test
     public void testAlignLocalOne() {
-        AlignmentGlobalTest.testAlign(seqOne, seqTwo, gapPenalty, true, resultOne, 0);
+        testAlign(seqOne, seqTwo, gapPenalty, true, resultOne, 0);
     }
 
     @Test
     public void testAlignLocalTwo() {
-        AlignmentGlobalTest.testAlign(seqOne, seqTwo, gapPenalty, true, resultTwo, 1);
+        testAlign(seqOne, seqTwo, gapPenalty, true, resultTwo, 1);
     }
 }

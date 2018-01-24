@@ -82,7 +82,12 @@ public class AlignmentMain {
                 System.err.println("ERROR: file " + filePath + " contains " + seqCount + " instead of 2 Sequences");
                 System.exit(1);
             }
-            sequences = (Sequence[]) sequenceList.toArray();
+            sequences = new Sequence[sequenceList.size()];
+            int i = 0;
+            for (Sequence sequence : sequenceList) {
+                sequences[i] = sequence;
+                i++;
+            }
         }
 
         AlignmentResult alignmentResult = null;

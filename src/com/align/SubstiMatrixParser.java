@@ -5,6 +5,11 @@ import java.io.File;
 import java.io.FileReader;
 import java.io.IOException;
 
+/**
+ * Parser, der die Datei BLOSUM62 parset.
+ *
+ * @author Soeren Metje
+ */
 public class SubstiMatrixParser {
 
 

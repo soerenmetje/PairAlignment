@@ -6,6 +6,8 @@ import com.align.fastaparser.Sequence;
 /**
  * Smith-Waterman-Algorithmus
  * Quelle: https://en.wikipedia.org/wiki/Smith%E2%80%93Waterman_algorithm
+ *
+ * @author Soeren Metje
  */
 public class Alignment {
 
