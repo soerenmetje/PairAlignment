@@ -77,7 +77,6 @@ public class AlignmentGlobalTest {
         testAlign(seqOne, seqTwo, gapPenalty, false, resultTwo, 1);
     }
 
-
     public static void testAlign(String seqOne, String seqTwo, int gapPenalty, boolean local, String result, int pos) {
         Sequence[] sequences = new Sequence[2];
         sequences[0] = new Sequence("one", null, seqOne);
