@@ -19,7 +19,7 @@ import static org.junit.runners.Parameterized.Parameters;
  * @author Soeren Metje
  */
 @RunWith(Parameterized.class)
-public class AlignmentTest {
+public class AlignmentLocalTest {
 
     private static final int[][] SUBSTI_MATRIX = {
             {11, -3, -2, -3, -3, -2, -4, 2, -2, 1, -3, -4, -2, -3, -4, -1, -2, -3, -3, -2},
@@ -58,9 +58,9 @@ public class AlignmentTest {
     @Parameters
     public static Collection<Object[]> data() {
         Object[][] data = new Object[][]{
-                {"GSAQVKGHGKKVADALTNAVAHVDDMPNALSALSDLHAHKL", "GNPKVKAHGKKVLGAFSDGLAHLDNLKGTFATLSELHCDKL", "GSAQVKGHGKKV--A--DALTNAVAHVDDMPNAL--S-A-LSDLHAHKL", "GNPKVKAHGKKVLGAFSDGL----AHLD---N-LKGTFATLSELHCDKL", 1},
-                {"GSAQVKGHGKKVADALTNAVAHVDDMPNALSALSDLHAHKL", "GNPKVKAHGKKVLGAFSDGLAHLDNLKGTFATLSELHCDKL", "GSAQVKGHGKKVADALTNAVAHVDDMPNALSALSDLHAHKL", "GNPKVKAHGKKVLGAFSDGLAHLDNLKGTFATLSELHCDKL", 5},
-                {"VKGHGKKVADALTNAVAHVDDMPNALSALSDLHAHKL", "GSAQVKGHGKKVAKALTNAVAHVDDMPNALSA", "----VKGHGKKVADALTNAVAHVDDMPNALSALSDLHAHKL", "GSAQVKGHGKKVAKALTNAVAHVDDMPNALSA---------", 1}, // insert gaps at start and end
+                {"GSAQVKGHGKKVADALTNAVAHVDDMPNALSALSDLHAHKL", "GNPKVKAHGKKVLGAFSDGLAHLDNLKGTFATLSELHCDKL", "GSAQVKGHGKKV--A--DALTNAVAHVDDMPNAL--S-A-LSDLHAHKL", "GNPKVKAHGKKVLGAFSDGL----AHL-D--N-LKGTFATLSELHCDKL", 1},
+                {"GSAQVKGHGKKVADALTNAVAHVDDMPNALSALSDLHAHKL", "GNPKVKAHGKKVLGAFSDGLAHLDNLKGTFATLSELHCDKL", "GSAQVKGHGKKVADALTNAVAHVDDMPNALSALSDLHAHKL", "GNPKVKAHGKKVLGAFSDGLAHLDNLKGTFATLSELHCDKL     ", 5},
+                {"VKGHGKKVADALTNAVAHVDDMPNALSALSDLHAHKL", "GSAQVKGHGKKVAKALTNAVAHVDDMPNALSA", "VKGHGKKVADALTNAVAHVDDMPNALSA", "VKGHGKKVAKALTNAVAHVDDMPNALSA", 1}, // remove at start and end and 1 substitution
                 {"FSCQCAPGYTGARCETNIDDCLGEIKCQNNA", "FSCQCAPGYTGARCETNIDDCLGEIKCQNNA", "FSCQCAPGYTGARCETNIDDCLGEIKCQNNA", "FSCQCAPGYTGARCETNIDDCLGEIKCQNNA", 1}, // same seq
                 {"FSCQCAPGYTGARCETNIDDCLGEIKCQNNATCIDGVESYKCECQPGFSGEFCDTKIQFC", "YKCECPRGFYDAHCLSDVDECASNPCVNEGRCEDGINEFICHCPPGYTGKRCELDIDEC", "FSCQCAP-G-YTGARCE-TNIDDCLGEIKCQNNATCI-DGV-ESYK-CECQPGFSGEF-C--DTKI-QFC", "YKCEC-PRGFY-DAHC-LSDVDECASN-PCVNEGRC-EDGINE-F-ICHCPPGYTGK-RCELD--IDE-C", 1},
                 {"FSCQCAPGYTGARCETNIDDCLGEIKCQNNATCIDGVESYKCECQPGFSGEFCDTKIQFC", "YKCECPRGFYDAHCLSDVDECASNPCVNEGRCEDGINEFICHCPPGYTGKRCELDIDEC", "FSCQCAPGYTGARCETNIDDCLGEIKCQNNATCIDGVESYKCECQPGFSGEFCDTKIQFC", "YKCECPRGFYDAHCLSDVDECASN-PCVNEGRCEDGINEFICHCPPGYTGKRCELDIDEC", 5}
@@ -69,30 +69,28 @@ public class AlignmentTest {
     }
 
     @Test
-    public void testAlignGlobalOne() {
-        testAlignGlobalTwo(resultOne, 0);
+    public void testAlignLocalOne() {
+        testAlignLocal(resultOne, 0);
     }
 
     @Test
-    public void testAlignGlobalTwo() {
-        testAlignGlobalTwo(resultTwo, 1);
+    public void testAlignLocalTwo() {
+        testAlignLocal(resultTwo, 1);
     }
 
 
-    private void testAlignGlobalTwo(String result, int pos) {
-        List<AlignmentResult> align = alignGlobal();
+    private void testAlignLocal(String result, int pos) {
+        List<AlignmentResult> align = alignLocal();
         String alignTwo = align.get(pos).getAlignedSequence();
 
+        Assert.assertEquals(2, align.size());
         Assert.assertEquals(result, alignTwo);
     }
 
-    private List<AlignmentResult> alignGlobal() {
+    private List<AlignmentResult> alignLocal() {
         Sequence sequenceOne = new Sequence("one", null, seqOne);
         Sequence sequenceTwo = new Sequence("two", null, seqTwo);
 
-        List<AlignmentResult> align = Alignment.alignGlobal(sequenceOne, sequenceTwo, gapPenalty, SUBSTI_MATRIX);
-
-        Assert.assertEquals(2, align.size());
-        return align;
+        return Alignment.alignLocal(sequenceOne, sequenceTwo, gapPenalty, SUBSTI_MATRIX);
     }
 }
