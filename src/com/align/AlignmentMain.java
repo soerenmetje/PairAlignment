@@ -74,22 +74,21 @@ public class AlignmentMain {
         }
 
         final String filePath = paramFilePath.getValue();
-        Sequence sequenceOne = null, sequenceTwo = null;
+        Sequence[] sequences = null;
         {
-            List<Sequence> sequences = readFile(filePath);
-            int seqCount = sequences.size();
+            List<Sequence> sequenceList = readFile(filePath);
+            int seqCount = sequenceList.size();
             if (seqCount != 2) {
                 System.err.println("ERROR: file " + filePath + " contains " + seqCount + " instead of 2 Sequences");
                 System.exit(1);
             }
-            sequenceOne = sequences.get(0);
-            sequenceTwo = sequences.get(1);
+            sequences = (Sequence[]) sequenceList.toArray();
         }
 
-        List<AlignmentResult> alignedSeq = null;
+        AlignmentResult alignmentResult = null;
         try {
             boolean local = paramTypeLocal.isSet();
-            alignedSeq = Alignment.align(local, sequenceOne, sequenceTwo, gapPenalty, substiMatrix);
+            alignmentResult = Alignment.align(local, sequences, gapPenalty, substiMatrix);
         } catch (IllegalArgumentException e) {
             System.err.println("ERROR: alignment failed. " + e.getMessage());
             System.exit(1);
@@ -97,21 +96,19 @@ public class AlignmentMain {
 
 
         {
-            AlignmentResult resultOne = alignedSeq.get(0);
-            long score = resultOne.getScore();
-            String alignOne = resultOne.getAlignedSequence();
-            String alignTwo = alignedSeq.get(1).getAlignedSequence();
-            System.out.println(String.format("Optimal alignment: \nscore = %d\n%s\n%s", score, alignOne, alignTwo));
+            long score = alignmentResult.getScore();
+            String[] alignments = alignmentResult.getAlignments();
+            System.out.println(String.format("Optimal alignment: \nscore = %d\n%s\n%s", score, alignments[0], alignments[1]));
         }
 
         {
             String fileDir = new File(filePath).getParent();
-            saveToFile(fileDir, OUTPUT_FILE_NAME, alignedSeq);
+            saveToFile(fileDir, OUTPUT_FILE_NAME, alignmentResult);
         }
 
     }
 
-    private static void saveToFile(String fileDir, String fileName, List<AlignmentResult> sequences) {
+    private static void saveToFile(String fileDir, String fileName, AlignmentResult alignmentResult) {
         //TODO implement
     }
 

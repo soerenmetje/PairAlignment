@@ -12,32 +12,34 @@ public class Alignment {
 
     private static final char GAP = '-';
 
-    public static List<AlignmentResult> align(final boolean local, final Sequence one, final Sequence two, final int gapPenalty, final int[][] substiMatrix) throws IllegalArgumentException {
+    public static AlignmentResult align(final boolean local, final Sequence[] sequences, final int gapPenalty, final int[][] substiMatrix) throws IllegalArgumentException {
         if (local)
-            return alignLocal(one, two, gapPenalty, substiMatrix);
+            return alignLocal(sequences, gapPenalty, substiMatrix);
         else
-            return alignGlobal(one, two, gapPenalty, substiMatrix);
+            return alignGlobal(sequences, gapPenalty, substiMatrix);
     }
 
-    public static List<AlignmentResult> alignGlobal(final Sequence one, final Sequence two, final int gapPenalty, final int[][] substiMatrix) throws IllegalArgumentException {
-        if (one == null)
-            throw new IllegalArgumentException("first Sequence is null");
-        if (two == null)
-            throw new IllegalArgumentException("second Sequence is null");
+    public static AlignmentResult alignGlobal(final Sequence[] sequences, final int gapPenalty, final int[][] substiMatrix) throws IllegalArgumentException {
+        if (sequences == null)
+            throw new IllegalArgumentException("sequences is null");
         if (gapPenalty < 0)
             throw new IllegalArgumentException("gapPenalty is negative");
         if (substiMatrix == null)
             throw new IllegalArgumentException("substitution-matrix is null");
 
-        final String nucleotideSeqOne = one.getNucleotideSequence();
-        final String nucleotideSeqTwo = two.getNucleotideSequence();
+        final int sequenceCount = sequences.length;
+        if (sequenceCount != 2)
+            throw new IllegalArgumentException(sequenceCount + " Sequences passed. Pass 2 Sequences for pair-alignment");
+
+        final String nucleotideSeqOne = sequences[0].getNucleotideSequence();
+        final String nucleotideSeqTwo = sequences[1].getNucleotideSequence();
 
         final int lengthOne = nucleotideSeqOne.length();
         final int lengthTwo = nucleotideSeqTwo.length();
 
         // Init Matrix
-        final int[][] score = new int[lengthOne + 1][lengthTwo + 1];
-        final int[][] scoreArg = new int[lengthOne + 1][lengthTwo + 1];
+        int[][] score = new int[lengthOne + 1][lengthTwo + 1];
+        int[][] scoreArg = new int[lengthOne + 1][lengthTwo + 1];
 
         for (int i = 1; i < lengthOne + 1; i++) {
             score[i][0] = i * -1 * gapPenalty;
@@ -76,9 +78,12 @@ public class Alignment {
             }
         }
 
+        final long totalScore = score[lengthOne][lengthTwo];
+        score = null; // no reference missing -> allow garbage collector to trash
+
         // Backtrace
-        final StringBuilder alignedSeqOne = new StringBuilder();
-        final StringBuilder alignedSeqTwo = new StringBuilder();
+        final StringBuilder alignmentOne = new StringBuilder();
+        final StringBuilder alignmentTwo = new StringBuilder();
         {
             int i = lengthOne, j = lengthTwo;
             while (i >= 0 && j >= 0 && (i > 0 || j > 0)) {
@@ -86,18 +91,18 @@ public class Alignment {
 
                 switch (maxArg) {
                     case 0: {
-                        alignedSeqOne.insert(0, nucleotideSeqOne.charAt(i - 1));
-                        alignedSeqTwo.insert(0, nucleotideSeqTwo.charAt(j - 1));
+                        alignmentOne.insert(0, nucleotideSeqOne.charAt(i - 1));
+                        alignmentTwo.insert(0, nucleotideSeqTwo.charAt(j - 1));
                         break;
                     }
                     case 1: {
-                        alignedSeqOne.insert(0, GAP);
-                        alignedSeqTwo.insert(0, nucleotideSeqTwo.charAt(j - 1));
+                        alignmentOne.insert(0, GAP);
+                        alignmentTwo.insert(0, nucleotideSeqTwo.charAt(j - 1));
                         break;
                     }
                     case 2: {
-                        alignedSeqOne.insert(0, nucleotideSeqOne.charAt(i - 1));
-                        alignedSeqTwo.insert(0, GAP);
+                        alignmentOne.insert(0, nucleotideSeqOne.charAt(i - 1));
+                        alignmentTwo.insert(0, GAP);
                         break;
                     }
                 }
@@ -109,38 +114,40 @@ public class Alignment {
         }
 
         // finalize
-        final long totalScore = score[lengthOne][lengthTwo];
 
-        final List<AlignmentResult> alignResults = new ArrayList<>(2);
-        alignResults.add(new AlignmentResult(one, totalScore, alignedSeqOne.toString()));
-        alignResults.add(new AlignmentResult(two, totalScore, alignedSeqTwo.toString()));
-
-        return alignResults;
+        return new AlignmentResult(sequences, totalScore, new String[]{alignmentOne.toString(), alignmentTwo.toString()});
     }
 
-    public static List<AlignmentResult> alignLocal(final Sequence one, final Sequence two, final int gapPenalty, final int[][] substiMatrix) throws IllegalArgumentException {
-        if (one == null)
-            throw new IllegalArgumentException("first Sequence is null");
-        if (two == null)
-            throw new IllegalArgumentException("second Sequence is null");
+    /**
+     * Smith-Waterman-Algorithmus findet optimales lokales Alignment und gibt es zurueck.
+     *
+     * @param sequences
+     * @param gapPenalty
+     * @param substiMatrix
+     * @return
+     * @throws IllegalArgumentException
+     */
+    public static AlignmentResult alignLocal(final Sequence[] sequences, final int gapPenalty, final int[][] substiMatrix) throws IllegalArgumentException {
+        if (sequences == null)
+            throw new IllegalArgumentException("sequences is null");
         if (gapPenalty < 0)
             throw new IllegalArgumentException("gapPenalty is negative");
         if (substiMatrix == null)
             throw new IllegalArgumentException("substitution-matrix is null");
 
+        final int sequenceCount = sequences.length;
+        if (sequenceCount != 2)
+            throw new IllegalArgumentException(sequenceCount + " Sequences passed. Pass 2 Sequences for pair-alignment");
+
         // TODO find local alignment
 
-        final StringBuilder alignedSeqOne = new StringBuilder();
-        final StringBuilder alignedSeqTwo = new StringBuilder();
+        final StringBuilder alignmentOne = new StringBuilder();
+        final StringBuilder alignmentTwo = new StringBuilder();
 
         // TODO create aligned seq
 
         final long totalScore = 0;
 
-        final List<AlignmentResult> alignResults = new ArrayList<>(2);
-        alignResults.add(new AlignmentResult(one, totalScore, alignedSeqOne.toString()));
-        alignResults.add(new AlignmentResult(two, totalScore, alignedSeqTwo.toString()));
-
-        return alignResults;
+        return new AlignmentResult(sequences, totalScore, new String[]{alignmentOne.toString(), alignmentTwo.toString()});
     }
 }

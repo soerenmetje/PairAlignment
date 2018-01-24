@@ -8,7 +8,6 @@ import org.junit.runners.Parameterized;
 
 import java.util.Arrays;
 import java.util.Collection;
-import java.util.List;
 
 import static org.junit.runners.Parameterized.Parameter;
 import static org.junit.runners.Parameterized.Parameters;
@@ -70,27 +69,27 @@ public class AlignmentGlobalTest {
 
     @Test
     public void testAlignGlobalOne() {
-        testAlignGlobal(resultOne, 0);
+        testAlign(seqOne, seqTwo, gapPenalty, false, resultOne, 0);
     }
 
     @Test
     public void testAlignGlobalTwo() {
-        testAlignGlobal(resultTwo, 1);
+        testAlign(seqOne, seqTwo, gapPenalty, false, resultTwo, 1);
     }
 
 
-    private void testAlignGlobal(String result, int pos) {
-        List<AlignmentResult> align = alignGlobal();
-        String alignTwo = align.get(pos).getAlignedSequence();
+    public static void testAlign(String seqOne, String seqTwo, int gapPenalty, boolean local, String result, int pos) {
+        Sequence[] sequences = new Sequence[2];
+        sequences[0] = new Sequence("one", null, seqOne);
+        sequences[1] = new Sequence("two", null, seqTwo);
 
-        Assert.assertEquals(2, align.size());
-        Assert.assertEquals(result, alignTwo);
-    }
 
-    private List<AlignmentResult> alignGlobal() {
-        Sequence sequenceOne = new Sequence("one", null, seqOne);
-        Sequence sequenceTwo = new Sequence("two", null, seqTwo);
+        AlignmentResult alignmentResult;
+        alignmentResult = Alignment.align(local, sequences, gapPenalty, SUBSTI_MATRIX);
 
-        return Alignment.alignGlobal(sequenceOne, sequenceTwo, gapPenalty, SUBSTI_MATRIX);
+        String[] alignments = alignmentResult.getAlignments();
+
+        Assert.assertEquals(2, alignments.length);
+        Assert.assertEquals(result, alignments[pos]);
     }
 }

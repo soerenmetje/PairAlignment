@@ -1,14 +1,11 @@
 package com.align.align;
 
-import com.align.fastaparser.Sequence;
-import org.junit.Assert;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.junit.runners.Parameterized;
 
 import java.util.Arrays;
 import java.util.Collection;
-import java.util.List;
 
 import static org.junit.runners.Parameterized.Parameter;
 import static org.junit.runners.Parameterized.Parameters;
@@ -70,27 +67,11 @@ public class AlignmentLocalTest {
 
     @Test
     public void testAlignLocalOne() {
-        testAlignLocal(resultOne, 0);
+        AlignmentGlobalTest.testAlign(seqOne, seqTwo, gapPenalty, true, resultOne, 0);
     }
 
     @Test
     public void testAlignLocalTwo() {
-        testAlignLocal(resultTwo, 1);
-    }
-
-
-    private void testAlignLocal(String result, int pos) {
-        List<AlignmentResult> align = alignLocal();
-        String alignTwo = align.get(pos).getAlignedSequence();
-
-        Assert.assertEquals(2, align.size());
-        Assert.assertEquals(result, alignTwo);
-    }
-
-    private List<AlignmentResult> alignLocal() {
-        Sequence sequenceOne = new Sequence("one", null, seqOne);
-        Sequence sequenceTwo = new Sequence("two", null, seqTwo);
-
-        return Alignment.alignLocal(sequenceOne, sequenceTwo, gapPenalty, SUBSTI_MATRIX);
+        AlignmentGlobalTest.testAlign(seqOne, seqTwo, gapPenalty, true, resultTwo, 1);
     }
 }

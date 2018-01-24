@@ -4,25 +4,25 @@ import com.align.fastaparser.Sequence;
 
 public class AlignmentResult {
 
-    private final Sequence sequence;
+    private final Sequence[] sequences;
     private final long score;
-    private final String alignedSequence;
+    private final String[] alignments;
 
-    public AlignmentResult(Sequence sequence, long score, String alignedSequence) {
-        this.sequence = sequence;
+    public AlignmentResult(Sequence[] sequences, long score, String[] alignments) {
+        this.sequences = sequences;
         this.score = score;
-        this.alignedSequence = alignedSequence;
+        this.alignments = alignments;
     }
 
-    public Sequence getSequence() {
-        return sequence;
+    public Sequence[] getSequences() {
+        return sequences;
     }
 
     public long getScore() {
         return score;
     }
 
-    public String getAlignedSequence() {
-        return alignedSequence;
+    public String[] getAlignments() {
+        return alignments;
     }
 }
