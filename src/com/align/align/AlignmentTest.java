@@ -1,4 +1,4 @@
-package com.align;
+package com.align.align;
 
 import com.align.fastaparser.Sequence;
 import org.junit.Assert;
@@ -59,6 +59,7 @@ public class AlignmentTest {
     public static Collection<Object[]> data() {
         Object[][] data = new Object[][]{
                 {"GSAQVKGHGKKVADALTNAVAHVDDMPNALSALSDLHAHKL", "GNPKVKAHGKKVLGAFSDGLAHLDNLKGTFATLSELHCDKL", "GSAQVKGHGKKV--A--DALTNAVAHVDDMPNAL--S-A-LSDLHAHKL", "GNPKVKAHGKKVLGAFSDGL----AHLD---N-LKGTFATLSELHCDKL", 1},
+                {"GSAQVKGHGKKVADALTNAVAHVDDMPNALSALSDLHAHKL", "GNPKVKAHGKKVLGAFSDGLAHLDNLKGTFATLSELHCDKL", "GSAQVKGHGKKVADALTNAVAHVDDMPNALSALSDLHAHKL", "GNPKVKAHGKKVLGAFSDGLAHLDNLKGTFATLSELHCDKL", 5},
                 {"FSCQCAPGYTGARCETNIDDCLGEIKCQNNA", "FSCQCAPGYTGARCETNIDDCLGEIKCQNNA", "FSCQCAPGYTGARCETNIDDCLGEIKCQNNA", "FSCQCAPGYTGARCETNIDDCLGEIKCQNNA", 1}, // same seq
                 {"FSCQCAPGYTGARCETNIDDCLGEIKCQNNATCIDGVESYKCECQPGFSGEFCDTKIQFC", "YKCECPRGFYDAHCLSDVDECASNPCVNEGRCEDGINEFICHCPPGYTGKRCELDIDEC", "FSCQCAP-G-YTGARCE-TNIDDCLGEIKCQNNATCI-DGV-ESYK-CECQPGFSGEF-C--DTKI-QFC", "YKCEC-PRGFY-DAHC-LSDVDECASN-PCVNEGRC-EDGINE-F-ICHCPPGYTGK-RCELD--IDE-C", 1},
                 {"FSCQCAPGYTGARCETNIDDCLGEIKCQNNATCIDGVESYKCECQPGFSGEFCDTKIQFC", "YKCECPRGFYDAHCLSDVDECASNPCVNEGRCEDGINEFICHCPPGYTGKRCELDIDEC", "FSCQCAPGYTGARCETNIDDCLGEIKCQNNATCIDGVESYKCECQPGFSGEFCDTKIQFC", "YKCECPRGFYDAHCLSDVDECASN-PCVNEGRCEDGINEFICHCPPGYTGKRCELDIDEC", 5}
@@ -71,14 +72,14 @@ public class AlignmentTest {
         Sequence sequenceOne = new Sequence("one", null, seqOne);
         Sequence sequenceTwo = new Sequence("two", null, seqTwo);
 
-        List<Sequence> align = Alignment.alignGlobal(sequenceOne, sequenceTwo, gapPenalty, SUBSTI_MATRIX);
+        List<AlignmentResult> align = Alignment.alignGlobal(sequenceOne, sequenceTwo, gapPenalty, SUBSTI_MATRIX);
 
         Assert.assertEquals(2, align.size());
 
-        Sequence alignOne = align.get(0);
-        Sequence alignTwo = align.get(1);
+        String alignOne = align.get(0).getAlignedSequence();
+        String alignTwo = align.get(1).getAlignedSequence();
 
-        Assert.assertEquals(resultOne, alignOne.getNucleotideSequence());
-        Assert.assertEquals(resultTwo, alignTwo.getNucleotideSequence());
+        Assert.assertEquals(resultOne, alignOne);
+        Assert.assertEquals(resultTwo, alignTwo);
     }
 }

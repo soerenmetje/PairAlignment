@@ -1,5 +1,6 @@
-package com.align;
+package com.align.align;
 
+import com.align.AlignmentMain;
 import com.align.fastaparser.Sequence;
 
 import java.util.ArrayList;
@@ -11,26 +12,27 @@ public class Alignment {
 
     private static final char GAP = '-';
 
-    public static List<Sequence> alignGlobal(final Sequence one, final Sequence two, int gapPanelty, int[][] substiMatrix) {
-        final List<Sequence> alignedSeq = new ArrayList<>(2);
+    public static List<AlignmentResult> alignGlobal(final Sequence one, final Sequence two, final int gapPanelty, final int[][] substiMatrix) {
+        final String nucleotideSeqOne = one.getNucleotideSequence();
+        final String nucleotideSeqTwo = two.getNucleotideSequence();
 
-        String nucleotideSeqOne = one.getNucleotideSequence();
-        String nucleotideSeqTwo = two.getNucleotideSequence();
+        final int lengthOne = nucleotideSeqOne.length();
+        final int lengthTwo = nucleotideSeqTwo.length();
 
-        int lengthOne = nucleotideSeqOne.length();
-        int lengthTwo = nucleotideSeqTwo.length();
-
-        int[][] score = new int[lengthOne + 1][lengthTwo + 1];
-        int[][] scoreArg = new int[lengthOne + 1][lengthTwo + 1];
-
+        // Init Matrix
+        final int[][] score = new int[lengthOne + 1][lengthTwo + 1];
+        final int[][] scoreArg = new int[lengthOne + 1][lengthTwo + 1];
 
         for (int i = 1; i < lengthOne + 1; i++) {
             score[i][0] = i * -1 * gapPanelty;
+            scoreArg[i][0] = 2; // SHIFTS insert gap in second seq
         }
         for (int j = 1; j < lengthTwo + 1; j++) {
             score[0][j] = j * -1 * gapPanelty;
+            scoreArg[0][j] = 1; // SHIFTS insert gap in first seq
         }
 
+        // fill / Iterate Matrix
         for (int i = 1; i < lengthOne + 1; i++) {
             for (int j = 1; j < lengthTwo + 1; j++) {
 
@@ -57,11 +59,13 @@ public class Alignment {
                 scoreArg[i][j] = maxArg;
             }
         }
-        StringBuilder alignedSeqOne = new StringBuilder();
-        StringBuilder alignedSeqTwo = new StringBuilder();
+
+        // Backtrace
+        final StringBuilder alignedSeqOne = new StringBuilder();
+        final StringBuilder alignedSeqTwo = new StringBuilder();
         {
             int i = lengthOne, j = lengthTwo;
-            while (i > 0 && j > 0) {
+            while (i >= 0 && j >= 0 && (i > 0 || j > 0)) {
                 int maxArg = scoreArg[i][j];
 
                 switch (maxArg) {
@@ -88,12 +92,31 @@ public class Alignment {
             }
         }
 
-        String totalScore = String.valueOf(score[lengthOne][lengthTwo]);
+        // finalize
+        final long totalScore = score[lengthOne][lengthTwo];
 
-        alignedSeq.add(new Sequence(one.getDescription(), totalScore, alignedSeqOne.toString()));
-        alignedSeq.add(new Sequence(two.getDescription(), totalScore, alignedSeqTwo.toString()));
-        //TODO implement align
+        final List<AlignmentResult> alignResults = new ArrayList<>(2);
+        alignResults.add(new AlignmentResult(one, totalScore, alignedSeqOne.toString()));
+        alignResults.add(new AlignmentResult(two, totalScore, alignedSeqTwo.toString()));
 
-        return alignedSeq;
+        return alignResults;
+    }
+
+    public static List<AlignmentResult> alignLocal(final Sequence one, final Sequence two, final int gapPanelty, final int[][] substiMatrix) {
+
+        // TODO find local alignment
+
+        final StringBuilder alignedSeqOne = new StringBuilder();
+        final StringBuilder alignedSeqTwo = new StringBuilder();
+
+        // TODO create aligned seq
+
+        final long totalScore = 0;
+
+        final List<AlignmentResult> alignResults = new ArrayList<>(2);
+        alignResults.add(new AlignmentResult(one, totalScore, alignedSeqOne.toString()));
+        alignResults.add(new AlignmentResult(two, totalScore, alignedSeqTwo.toString()));
+
+        return alignResults;
     }
 }

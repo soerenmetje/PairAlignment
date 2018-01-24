@@ -1,5 +1,7 @@
 package com.align;
 
+import com.align.align.Alignment;
+import com.align.align.AlignmentResult;
 import com.align.argparser.ArgumentParser;
 import com.align.argparser.ArgumentParserException;
 import com.align.argparser.ParameterSet;
@@ -24,10 +26,10 @@ public class AlignmentMain {
 
     public static void main(String[] args) {
         // set up Parameter
-        ParameterSet parameterSet = new ParameterSet();
-        Setting paramFilePath = new Setting("file", true);
-        Setting paramFilePathSub = new Setting("filesub", true);
-        Setting paramGap = new Setting("gap", true);
+        final ParameterSet parameterSet = new ParameterSet();
+        final Setting paramFilePath = new Setting("file", true);
+        final Setting paramFilePathSub = new Setting("filesub", true);
+        final Setting paramGap = new Setting("gap", true);
         parameterSet.addSetting(paramFilePath);
         parameterSet.addSetting(paramFilePathSub);
         parameterSet.addSetting(paramGap);
@@ -72,7 +74,7 @@ public class AlignmentMain {
             System.out.println(out.toString());
         }
 
-        String filePath = paramFilePath.getValue();
+        final String filePath = paramFilePath.getValue();
         Sequence sequenceOne = null, sequenceTwo = null;
         {
             List<Sequence> sequences = readFile(filePath);
@@ -85,19 +87,29 @@ public class AlignmentMain {
             sequenceTwo = sequences.get(1);
         }
 
-        List<Sequence> alignedSeq = Alignment.alignGlobal(sequenceOne, sequenceTwo, gapPenalty, substiMatrix);
+        final List<AlignmentResult> alignedSeq = Alignment.alignGlobal(sequenceOne, sequenceTwo, gapPenalty, substiMatrix);
+
+
         {
-            File file = new File(filePath);
-            saveToFile(file.getParent(), OUTPUT_FILE_NAME, alignedSeq);
+            AlignmentResult resultOne = alignedSeq.get(0);
+            long score = resultOne.getScore();
+            String alignOne = resultOne.getAlignedSequence();
+            String alignTwo = alignedSeq.get(1).getAlignedSequence();
+            System.out.println(String.format("score = %d\n%s\n%s", score, alignOne, alignTwo));
+        }
+
+        {
+            String fileDir = new File(filePath).getParent();
+            saveToFile(fileDir, OUTPUT_FILE_NAME, alignedSeq);
         }
 
     }
 
-    private static void saveToFile(String filePath, String fileName, List<Sequence> sequences) {
+    private static void saveToFile(String fileDir, String fileName, List<AlignmentResult> sequences) {
         //TODO implement
     }
 
-    private static List<Sequence> readFile(String filePath) {
+    private static List<Sequence> readFile(final String filePath) {
         List<Sequence> ret = null;
 
         System.out.println("reading " + filePath);
