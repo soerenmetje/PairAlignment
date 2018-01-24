@@ -4,6 +4,8 @@ import com.align.AlignmentMain;
 import com.align.fastaparser.Sequence;
 
 /**
+ * Enthaelt Methoden zur Suche des optimalen globale oder lokalen Alignments zweier Sequenzen.
+ * <p>
  * Smith-Waterman-Algorithmus
  * Quelle: https://en.wikipedia.org/wiki/Smith%E2%80%93Waterman_algorithm
  *
@@ -11,26 +13,52 @@ import com.align.fastaparser.Sequence;
  */
 public class Alignment {
 
+    /**
+     * Versatz-Kombinationen (bei der suche des Maximums) erster wert ist i, zweite j
+     */
     private static final int[][] SHIFTS = new int[][]{{1, 1}, {0, 1}, {1, 0}};
 
+    /**
+     * Zeichen einer Gap
+     */
     private static final char GAP = '-';
 
+    /**
+     * Sucht optimales lokales Alignment der zwei uebergebenen Sequenzen.
+     * Liefert das gefundene Aligment zurueck.
+     *
+     * @param sequences    Array mit zwei Sequnzen, dessen Alignment gesucht werden soll
+     * @param gapPenalty   score-Abzug fuer Gaps
+     * @param substiMatrix Substitutuions-Matrix
+     * @return optimales lokales Alignment
+     * @throws IllegalArgumentException falls Beobachtung nicht im Feld gefunden wird
+     */
     public static AlignmentResult alignLocal(final Sequence[] sequences, final int gapPenalty, final int[][] substiMatrix) throws IllegalArgumentException {
         return align(true, sequences, gapPenalty, substiMatrix);
     }
 
+    /**
+     * Sucht optimales globales Alignment der zwei uebergebenen Sequenzen.
+     * Liefert das gefundene Aligment zurueck.
+     *
+     * @param sequences    Array mit zwei Sequnzen, dessen Alignment gesucht werden soll
+     * @param gapPenalty   score-Abzug fuer Gaps
+     * @param substiMatrix Substitutuions-Matrix
+     * @return optimales lokales Alignment
+     * @throws IllegalArgumentException falls Beobachtung nicht im Feld gefunden wird
+     */
     public static AlignmentResult alignGlobal(final Sequence[] sequences, final int gapPenalty, final int[][] substiMatrix) throws IllegalArgumentException {
         return align(false, sequences, gapPenalty, substiMatrix);
     }
 
     /**
-     * Smith-Waterman-Algorithmus findet optimales lokales Alignment und gibt es zurueck.
+     * Sucht optimales Alignment und gibt es zurueck.
      *
-     * @param local
-     * @param sequences
-     * @param gapPenalty
-     * @param substiMatrix
-     * @return
+     * @param local        true falls lokales Alignment gesucht werden soll
+     * @param sequences    Array mit zwei Sequnzen, dessen Alignment gesucht werden soll
+     * @param gapPenalty   score-Abzug fuer Gaps
+     * @param substiMatrix Substitutuions-Matrix
+     * @return optimales Alignment
      * @throws IllegalArgumentException
      */
     public static AlignmentResult align(final boolean local, final Sequence[] sequences, final int gapPenalty, final int[][] substiMatrix) throws IllegalArgumentException {

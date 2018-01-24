@@ -6,21 +6,47 @@ import com.align.argparser.*;
 import com.align.fastaparser.FastaParser;
 import com.align.fastaparser.FastaParserException;
 import com.align.fastaparser.Sequence;
+import com.align.substiparser.SubstiMatrixParser;
 
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.util.List;
 
+/**
+ * Ausfuehrbare Klasse. Berechnet mittels {@link Alignment} ein Alignment.
+ * Die auf der Komandozeile uebergebenen Argumente werden mittels {@link ArgumentParser} geparset.
+ * Die Sequnezen werden aus der angegebenen Datei mittels {@link FastaParser} eingelesen.
+ * Die Substitutions-Matrix BLOSUM62 wird mittels {@link SubstiMatrixParser} eingelesen.
+ *
+ * @author Soeren Metje
+ */
 public class AlignmentMain {
 
-    public static final String OUTPUT_FILE_NAME = "aligned.fasta";
+    /**
+     * Daeiname der Ausgabe-Datei fuer das Alignment
+     */
+    public static final String OUTPUT_FILE_NAME = "alignment.fasta";
 
+    /**
+     * Kuerzel der Aminosaeueren
+     */
     public static final char[] AMIN = new char[]{'W', 'V', 'T', 'S', 'R', 'Q', 'P', 'Y', 'G', 'F', 'E', 'D', 'C', 'A', 'N', 'M', 'L', 'K', 'I', 'H'};
+    /**
+     * Anzahl der Aminosaeuren
+     */
     public static final int AMIN_COUNT = AMIN.length;
 
+    /**
+     * Substitutions-Matrix
+     */
     private static int[][] substiMatrix;
 
+    /**
+     * Ausfuehrbare Methode
+     *
+     * @param args Argumente
+     */
     public static void main(String[] args) {
         // set up Parameter
         final ParameterSet parameterSet = new ParameterSet();
@@ -117,6 +143,13 @@ public class AlignmentMain {
         //TODO implement
     }
 
+    /**
+     * Liesst Datei an uebergebenem Pfad mittels {@link FastaParser} ein und liefert eine Liste mit den eingelesenen Sequenzen zurueck.
+     * Bei einem Fehler wird die VM beendet.
+     *
+     * @param filePath Datei-Pfad
+     * @return Liste mit den eingelesenen Sequenzen
+     */
     private static List<Sequence> readFile(final String filePath) {
         List<Sequence> ret = null;
 
@@ -138,6 +171,13 @@ public class AlignmentMain {
         return ret;
     }
 
+    /**
+     * Mappt Aminosaeure-Kuerzel auf entsprechenden Index
+     *
+     * @param amino Aminosaeure-Kuerzel
+     * @return entsprechender Index
+     * @throws IllegalArgumentException falls Beobachtung nicht im Feld gefunden wird
+     */
     public static int aminoToIndex(char amino) throws IllegalArgumentException {
         return charToIndex(AMIN, amino);
     }

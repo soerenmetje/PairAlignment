@@ -10,7 +10,7 @@ import java.util.Collection;
 import static org.junit.runners.Parameterized.Parameters;
 
 /**
- * Test-Klasse fuer das locale Alignment der Klasse {@link Alignment}.
+ * Test-Klasse fuer das lokale Alignment der Klasse {@link Alignment}.
  *
  * @author Soeren Metje
  */
