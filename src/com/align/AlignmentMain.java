@@ -2,10 +2,7 @@ package com.align;
 
 import com.align.align.Alignment;
 import com.align.align.AlignmentResult;
-import com.align.argparser.ArgumentParser;
-import com.align.argparser.ArgumentParserException;
-import com.align.argparser.ParameterSet;
-import com.align.argparser.Setting;
+import com.align.argparser.*;
 import com.align.fastaparser.FastaParser;
 import com.align.fastaparser.FastaParserException;
 import com.align.fastaparser.Sequence;
@@ -30,9 +27,11 @@ public class AlignmentMain {
         final Setting paramFilePath = new Setting("file", true);
         final Setting paramFilePathSub = new Setting("filesub", true);
         final Setting paramGap = new Setting("gap", true);
+        final Flag paramTypeLocal = new Flag("local", false);
         parameterSet.addSetting(paramFilePath);
         parameterSet.addSetting(paramFilePathSub);
         parameterSet.addSetting(paramGap);
+        parameterSet.addFlag(paramTypeLocal);
 
         try {
             ArgumentParser parser = new ArgumentParser(parameterSet);
@@ -87,7 +86,14 @@ public class AlignmentMain {
             sequenceTwo = sequences.get(1);
         }
 
-        final List<AlignmentResult> alignedSeq = Alignment.alignGlobal(sequenceOne, sequenceTwo, gapPenalty, substiMatrix);
+        List<AlignmentResult> alignedSeq = null;
+        try {
+            boolean local = paramTypeLocal.isSet();
+            alignedSeq = Alignment.align(local, sequenceOne, sequenceTwo, gapPenalty, substiMatrix);
+        } catch (IllegalArgumentException e) {
+            System.err.println("ERROR: alignment failed. " + e.getMessage());
+            System.exit(1);
+        }
 
 
         {
@@ -95,7 +101,7 @@ public class AlignmentMain {
             long score = resultOne.getScore();
             String alignOne = resultOne.getAlignedSequence();
             String alignTwo = alignedSeq.get(1).getAlignedSequence();
-            System.out.println(String.format("score = %d\n%s\n%s", score, alignOne, alignTwo));
+            System.out.println(String.format("Optimal alignment: \nscore = %d\n%s\n%s", score, alignOne, alignTwo));
         }
 
         {
@@ -130,26 +136,8 @@ public class AlignmentMain {
         return ret;
     }
 
-    public static int aminoToIndex(char amino) {
+    public static int aminoToIndex(char amino) throws IllegalArgumentException {
         return charToIndex(AMIN, amino);
-    }
-
-    /**
-     * Mappt Beaobachtung-Folge auf entsprechende Index-Folge
-     *
-     * @param space        Feld aller Beobachtungen
-     * @param observations Beobachtungs-Folge
-     * @return entsprechende Index-Folge
-     * @throws IllegalArgumentException falls Beobachtung nicht im Feld gefunden wird
-     */
-    public static int[] charsToIndices(final char[] space, final char[] observations) throws IllegalArgumentException {
-        int length = observations.length;
-        int[] ret = new int[length];
-
-        for (int i = 0; i < length; i++) {
-            ret[i] = charToIndex(space, observations[i]);
-        }
-        return ret;
     }
 
     /**

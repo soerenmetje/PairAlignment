@@ -12,7 +12,23 @@ public class Alignment {
 
     private static final char GAP = '-';
 
-    public static List<AlignmentResult> alignGlobal(final Sequence one, final Sequence two, final int gapPanelty, final int[][] substiMatrix) {
+    public static List<AlignmentResult> align(final boolean local, final Sequence one, final Sequence two, final int gapPenalty, final int[][] substiMatrix) throws IllegalArgumentException {
+        if (local)
+            return alignLocal(one, two, gapPenalty, substiMatrix);
+        else
+            return alignGlobal(one, two, gapPenalty, substiMatrix);
+    }
+
+    public static List<AlignmentResult> alignGlobal(final Sequence one, final Sequence two, final int gapPenalty, final int[][] substiMatrix) throws IllegalArgumentException {
+        if (one == null)
+            throw new IllegalArgumentException("first Sequence is null");
+        if (two == null)
+            throw new IllegalArgumentException("second Sequence is null");
+        if (gapPenalty < 0)
+            throw new IllegalArgumentException("gapPenalty is negative");
+        if (substiMatrix == null)
+            throw new IllegalArgumentException("substitution-matrix is null");
+
         final String nucleotideSeqOne = one.getNucleotideSequence();
         final String nucleotideSeqTwo = two.getNucleotideSequence();
 
@@ -24,11 +40,11 @@ public class Alignment {
         final int[][] scoreArg = new int[lengthOne + 1][lengthTwo + 1];
 
         for (int i = 1; i < lengthOne + 1; i++) {
-            score[i][0] = i * -1 * gapPanelty;
+            score[i][0] = i * -1 * gapPenalty;
             scoreArg[i][0] = 2; // SHIFTS insert gap in second seq
         }
         for (int j = 1; j < lengthTwo + 1; j++) {
-            score[0][j] = j * -1 * gapPanelty;
+            score[0][j] = j * -1 * gapPenalty;
             scoreArg[0][j] = 1; // SHIFTS insert gap in first seq
         }
 
@@ -47,7 +63,7 @@ public class Alignment {
                     if (k == 0)
                         scoreOrGap = substiMatrix[AlignmentMain.aminoToIndex(nucleotideSeqOne.charAt(i - 1))][AlignmentMain.aminoToIndex(nucleotideSeqTwo.charAt(j - 1))];
                     else
-                        scoreOrGap = -1 * gapPanelty;
+                        scoreOrGap = -1 * gapPenalty;
                     int currentScore = score[i - s[0]][j - s[1]] + scoreOrGap;
 
                     if (currentScore > maxScore) {
@@ -102,7 +118,15 @@ public class Alignment {
         return alignResults;
     }
 
-    public static List<AlignmentResult> alignLocal(final Sequence one, final Sequence two, final int gapPanelty, final int[][] substiMatrix) {
+    public static List<AlignmentResult> alignLocal(final Sequence one, final Sequence two, final int gapPenalty, final int[][] substiMatrix) throws IllegalArgumentException {
+        if (one == null)
+            throw new IllegalArgumentException("first Sequence is null");
+        if (two == null)
+            throw new IllegalArgumentException("second Sequence is null");
+        if (gapPenalty < 0)
+            throw new IllegalArgumentException("gapPenalty is negative");
+        if (substiMatrix == null)
+            throw new IllegalArgumentException("substitution-matrix is null");
 
         // TODO find local alignment
 
