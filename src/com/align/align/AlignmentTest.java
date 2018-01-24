@@ -60,6 +60,7 @@ public class AlignmentTest {
         Object[][] data = new Object[][]{
                 {"GSAQVKGHGKKVADALTNAVAHVDDMPNALSALSDLHAHKL", "GNPKVKAHGKKVLGAFSDGLAHLDNLKGTFATLSELHCDKL", "GSAQVKGHGKKV--A--DALTNAVAHVDDMPNAL--S-A-LSDLHAHKL", "GNPKVKAHGKKVLGAFSDGL----AHLD---N-LKGTFATLSELHCDKL", 1},
                 {"GSAQVKGHGKKVADALTNAVAHVDDMPNALSALSDLHAHKL", "GNPKVKAHGKKVLGAFSDGLAHLDNLKGTFATLSELHCDKL", "GSAQVKGHGKKVADALTNAVAHVDDMPNALSALSDLHAHKL", "GNPKVKAHGKKVLGAFSDGLAHLDNLKGTFATLSELHCDKL", 5},
+                {"VKGHGKKVADALTNAVAHVDDMPNALSALSDLHAHKL", "GSAQVKGHGKKVAKALTNAVAHVDDMPNALSA", "----VKGHGKKVADALTNAVAHVDDMPNALSALSDLHAHKL", "GSAQVKGHGKKVAKALTNAVAHVDDMPNALSA---------", 1}, // insert gaps at start and end
                 {"FSCQCAPGYTGARCETNIDDCLGEIKCQNNA", "FSCQCAPGYTGARCETNIDDCLGEIKCQNNA", "FSCQCAPGYTGARCETNIDDCLGEIKCQNNA", "FSCQCAPGYTGARCETNIDDCLGEIKCQNNA", 1}, // same seq
                 {"FSCQCAPGYTGARCETNIDDCLGEIKCQNNATCIDGVESYKCECQPGFSGEFCDTKIQFC", "YKCECPRGFYDAHCLSDVDECASNPCVNEGRCEDGINEFICHCPPGYTGKRCELDIDEC", "FSCQCAP-G-YTGARCE-TNIDDCLGEIKCQNNATCI-DGV-ESYK-CECQPGFSGEF-C--DTKI-QFC", "YKCEC-PRGFY-DAHC-LSDVDECASN-PCVNEGRC-EDGINE-F-ICHCPPGYTGK-RCELD--IDE-C", 1},
                 {"FSCQCAPGYTGARCETNIDDCLGEIKCQNNATCIDGVESYKCECQPGFSGEFCDTKIQFC", "YKCECPRGFYDAHCLSDVDECASNPCVNEGRCEDGINEFICHCPPGYTGKRCELDIDEC", "FSCQCAPGYTGARCETNIDDCLGEIKCQNNATCIDGVESYKCECQPGFSGEFCDTKIQFC", "YKCECPRGFYDAHCLSDVDECASN-PCVNEGRCEDGINEFICHCPPGYTGKRCELDIDEC", 5}
@@ -68,18 +69,30 @@ public class AlignmentTest {
     }
 
     @Test
-    public void testAlignGlobal() {
+    public void testAlignGlobalOne() {
+        testAlignGlobalTwo(resultOne, 0);
+    }
+
+    @Test
+    public void testAlignGlobalTwo() {
+        testAlignGlobalTwo(resultTwo, 1);
+    }
+
+
+    private void testAlignGlobalTwo(String result, int pos) {
+        List<AlignmentResult> align = alignGlobal();
+        String alignTwo = align.get(pos).getAlignedSequence();
+
+        Assert.assertEquals(result, alignTwo);
+    }
+
+    private List<AlignmentResult> alignGlobal() {
         Sequence sequenceOne = new Sequence("one", null, seqOne);
         Sequence sequenceTwo = new Sequence("two", null, seqTwo);
 
         List<AlignmentResult> align = Alignment.alignGlobal(sequenceOne, sequenceTwo, gapPenalty, SUBSTI_MATRIX);
 
         Assert.assertEquals(2, align.size());
-
-        String alignOne = align.get(0).getAlignedSequence();
-        String alignTwo = align.get(1).getAlignedSequence();
-
-        Assert.assertEquals(resultOne, alignOne);
-        Assert.assertEquals(resultTwo, alignTwo);
+        return align;
     }
 }
