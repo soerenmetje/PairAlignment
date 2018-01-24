@@ -85,7 +85,7 @@ public class AlignmentMain {
             sequenceTwo = sequences.get(1);
         }
 
-        List<Sequence> alignedSeq = Alignment.alginSequences(sequenceOne, sequenceTwo, gapPenalty);
+        List<Sequence> alignedSeq = Alignment.alignGlobal(sequenceOne, sequenceTwo, gapPenalty, substiMatrix);
         {
             File file = new File(filePath);
             saveToFile(file.getParent(), OUTPUT_FILE_NAME, alignedSeq);
