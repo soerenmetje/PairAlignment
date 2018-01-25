@@ -17,6 +17,11 @@ import static org.junit.runners.Parameterized.Parameters;
 @RunWith(Parameterized.class)
 public class AlignmentGlobalTest extends AlignmentTestTemplate {
 
+    /**
+     * Parameter
+     *
+     * @return Liste mit Parametern
+     */
     //seqOne, seqTwo, resultOne, resultTwo, gapPenalty
     @Parameters
     public static Collection<Object[]> data() {
@@ -31,11 +36,17 @@ public class AlignmentGlobalTest extends AlignmentTestTemplate {
         return Arrays.asList(data);
     }
 
+    /**
+     * Test fuer erste Sequenz
+     */
     @Test
     public void testAlignGlobalOne() {
         testAlign(seqOne, seqTwo, gapPenalty, false, resultOne, 0);
     }
 
+    /**
+     * Test fuer zweite Sequenz
+     */
     @Test
     public void testAlignGlobalTwo() {
         testAlign(seqOne, seqTwo, gapPenalty, false, resultTwo, 1);

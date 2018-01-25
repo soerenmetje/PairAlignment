@@ -26,7 +26,7 @@ public class AlignmentMain {
     /**
      * Daeiname der Ausgabe-Datei fuer das Alignment
      */
-    public static final String OUTPUT_FILE_NAME = "alignment.fasta";
+    public static final String OUTPUT_FILE_NAME = "alignment%s.fasta"; // %s to add information
 
     /**
      * Kuerzel der Aminosaeueren
@@ -139,6 +139,14 @@ public class AlignmentMain {
 
     }
 
+    /**
+     * Speichert uebergebene Alignments in Datei. Dabei wird das Fasta-Format verwendet.
+     * Falls die Datei schon vorhanden ist, wird diese ueberschrieben.
+     *
+     * @param fileDir         Dateiverzeichnis
+     * @param fileName        zu vergebener Dateiname
+     * @param alignmentResult Alignments
+     */
     private static void saveToFile(String fileDir, String fileName, AlignmentResult alignmentResult) {
         //TODO implement
     }
