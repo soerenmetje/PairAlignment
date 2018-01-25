@@ -50,17 +50,19 @@ public abstract class AlignmentTestTemplate {
      * @param pos        erstes oder zweites Alignment ueberpruefen
      */
     static void testAlign(String seqOne, String seqTwo, int gapPenalty, boolean local, String result, int pos) {
-        Sequence[] sequences = new Sequence[2];
-        sequences[0] = new Sequence("one", null, seqOne);
-        sequences[1] = new Sequence("two", null, seqTwo);
 
-
-        AlignmentResult alignmentResult;
-        alignmentResult = Alignment.align(local, sequences, gapPenalty, AlignmentMain.SUBSTI_MATRIX_DEFAULT);
-
+        AlignmentResult alignmentResult = align(seqOne, seqTwo, gapPenalty, local);
         String[] alignments = alignmentResult.getAlignments();
 
         Assert.assertEquals(2, alignments.length);
         Assert.assertEquals(result, alignments[pos]);
+    }
+
+    static AlignmentResult align(String seqOne, String seqTwo, int gapPenalty, boolean local) {
+        Sequence[] sequences = new Sequence[2];
+        sequences[0] = new Sequence("one", null, seqOne);
+        sequences[1] = new Sequence("two", null, seqTwo);
+
+        return Alignment.align(local, sequences, gapPenalty, AlignmentMain.SUBSTI_MATRIX_DEFAULT);
     }
 }
