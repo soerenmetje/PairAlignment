@@ -24,14 +24,39 @@ import java.util.List;
 public class AlignmentMain {
 
     /**
+     * Standart-Substitutions-Matrix
+     */
+    public static final int[][] SUBSTI_MATRIX_DEFAULT = {
+            {11, -3, -2, -3, -3, -2, -4, 2, -2, 1, -3, -4, -2, -3, -4, -1, -2, -3, -3, -2},
+            {-3, 4, 0, -2, -3, -2, -2, -1, -3, -1, -2, -3, -1, 0, -3, 1, 1, -2, 3, -3},
+            {-2, 0, 5, 1, -1, -1, -1, -2, -2, -2, -1, -1, -1, 0, 0, -1, -1, -1, -1, -2},
+            {-3, -2, 1, 4, -1, 0, -1, -2, 0, -2, 0, 0, -1, 1, 1, -1, -2, 0, -2, -1},
+            {-3, -3, -1, -1, 5, 1, -2, -2, -2, -3, 0, -2, -3, -1, 0, -1, -2, 2, -3, 0},
+            {-2, -2, -1, 0, 1, 5, -1, -1, -2, -3, 2, 0, -3, -1, 0, 0, -2, 1, -3, 0},
+            {-4, -2, -1, -1, -2, -1, 7, -3, -2, -4, -1, -1, -3, -1, -2, -2, -3, -1, -3, -2},
+            {2, -1, -2, -2, -2, -1, -3, 7, -3, 3, -2, -3, -2, -2, -2, -1, -1, -2, -1, 2},
+            {-2, -3, -2, 0, -2, -2, -2, -3, 6, -3, -2, -1, -3, 0, 0, -3, -4, -2, -4, -2},
+            {1, -1, -2, -2, -3, -3, -4, 3, -3, 6, -3, -3, -2, -2, -3, 0, 0, -3, 0, -1},
+            {-3, -2, -1, 0, 0, 2, -1, -2, -2, -3, 5, 2, -4, -1, 0, -2, -3, 1, -3, 0},
+            {-4, -3, -1, 0, -2, 0, -1, -3, -1, -3, 2, 6, -3, -2, 1, -3, -4, -1, -3, -1},
+            {-2, -1, -1, -1, -3, -3, -3, -2, -3, -2, -4, -3, 9, 0, -3, -1, -1, -3, -1, -3},
+            {-3, 0, 0, 1, -1, -1, -1, -2, 0, -2, -1, -2, 0, 4, -2, -1, -1, -1, -1, -2},
+            {-4, -3, 0, 1, 0, 0, -2, -2, 0, -3, 0, 1, -3, -2, 6, -2, -3, 0, -3, 1},
+            {-1, 1, -1, -1, -1, 0, -2, -1, -3, 0, -2, -3, -1, -1, -2, 5, 2, -1, 1, -2},
+            {-2, 1, -1, -2, -2, -2, -3, -1, -4, 0, -3, -4, -1, -1, -3, 2, 4, -2, 2, -3},
+            {-3, -2, -1, 0, 2, 1, -1, -2, -2, -3, 1, -1, -3, -1, 0, -1, -2, 5, -3, -1},
+            {-3, 3, -1, -2, -3, -3, -3, -1, -4, 0, -3, -3, -1, -1, -3, 1, 2, -3, 4, -3},
+            {-2, -3, -2, -1, 0, 0, -2, 2, -2, -1, 0, -1, -3, -2, 1, -2, -3, -1, -3, 8}};
+
+    /**
      * Daeiname der Ausgabe-Datei fuer das Alignment
      */
-    public static final String OUTPUT_FILE_NAME = "alignment%s.fasta"; // %s to add information
+    private static final String OUTPUT_FILE_NAME = "alignment%s.fasta"; // %s to add information
 
     /**
      * Kuerzel der Aminosaeueren
      */
-    public static final char[] AMIN = new char[]{'W', 'V', 'T', 'S', 'R', 'Q', 'P', 'Y', 'G', 'F', 'E', 'D', 'C', 'A', 'N', 'M', 'L', 'K', 'I', 'H'};
+    private static final char[] AMIN = new char[]{'W', 'V', 'T', 'S', 'R', 'Q', 'P', 'Y', 'G', 'F', 'E', 'D', 'C', 'A', 'N', 'M', 'L', 'K', 'I', 'H'};
     /**
      * Anzahl der Aminosaeuren
      */
@@ -46,7 +71,7 @@ public class AlignmentMain {
         // set up Parameter
         final ParameterSet parameterSet = new ParameterSet();
         final Setting paramFilePath = new Setting("file", true);
-        final Setting paramFilePathSub = new Setting("filesub", true);
+        final Setting paramFilePathSub = new Setting("filesub", false);
         final Setting paramGap = new Setting("gap", true);
         final Flag paramTypeLocal = new Flag("local", false);
         parameterSet.addSetting(paramFilePath);
@@ -74,9 +99,12 @@ public class AlignmentMain {
             System.exit(1);
         }
 
-        // reading substitution matrix
         int[][] substiMatrix = null;
-        {
+        if (!paramFilePathSub.isSet()) {
+            substiMatrix = SUBSTI_MATRIX_DEFAULT;
+        }
+        // path passed -> reading substitution matrix
+        else {
             String filePath = paramFilePathSub.getValue();
             System.out.println("reading " + filePath);
             try {
