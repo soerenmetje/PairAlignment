@@ -18,9 +18,9 @@ import static org.junit.runners.Parameterized.Parameters;
 public class AlignmentGlobalTest extends AlignmentTestTemplate {
 
     /**
-     * Parameter
+     * Parameter mit Resultaten  der Testfaelle
      *
-     * @return Liste mit Parametern
+     * @return Liste mit Parametern und Resultaten der Testfaelle
      */
     //seqOne, seqTwo, resultOne, resultTwo, gapPenalty
     @Parameters

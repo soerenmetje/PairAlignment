@@ -38,11 +38,6 @@ public class AlignmentMain {
     public static final int AMIN_COUNT = AMIN.length;
 
     /**
-     * Substitutions-Matrix
-     */
-    private static int[][] substiMatrix;
-
-    /**
      * Ausfuehrbare Methode
      *
      * @param args Argumente
@@ -79,28 +74,23 @@ public class AlignmentMain {
             System.exit(1);
         }
 
-        try {
-            substiMatrix = SubstiMatrixParser.parseFile(paramFilePathSub.getValue());
-        } catch (IOException | IllegalArgumentException e) {
-            System.err.println("ERROR: while parsing substitution matrix " + e.getMessage());
-            System.exit(1);
-        }
-
-        // output substitution Matrix
+        // reading substitution matrix
+        int[][] substiMatrix = null;
         {
-            StringBuilder out = new StringBuilder("Substitution Matrix:\n");
-            for (int i = 0; i < substiMatrix.length; i++) {
-                out.append(AMIN[i]).append(":  ");
-                for (int j = 0; j < substiMatrix[i].length; j++) {
-                    out.append(String.format("%3d", substiMatrix[i][j]));
-                }
-                out.append('\n');
+            String filePath = paramFilePathSub.getValue();
+            System.out.println("reading " + filePath);
+            try {
+                substiMatrix = SubstiMatrixParser.parseFile(filePath);
+                System.out.println("successfully finished reading file");
+            } catch (IOException | IllegalArgumentException e) {
+                System.err.println("ERROR: while parsing substitution matrix " + e.getMessage());
+                System.exit(1);
             }
-            System.out.println(out.toString());
         }
 
+        // read Sequences
         final String filePath = paramFilePath.getValue();
-        Sequence[] sequences = null;
+        Sequence[] sequences;
         {
             List<Sequence> sequenceList = readFile(filePath);
             int seqCount = sequenceList.size();
@@ -116,6 +106,7 @@ public class AlignmentMain {
             }
         }
 
+        // calc optimal alignment
         AlignmentResult alignmentResult = null;
         try {
             boolean local = paramTypeLocal.isSet();
@@ -125,13 +116,14 @@ public class AlignmentMain {
             System.exit(1);
         }
 
-
+        // output alignment
         {
             long score = alignmentResult.getScore();
             String[] alignments = alignmentResult.getAlignments();
-            System.out.println(String.format("Optimal alignment: \nscore = %d\n%s\n%s", score, alignments[0], alignments[1]));
+            System.out.println(String.format("\nOptimal alignment: \nscore = %d\n%s\n%s", score, alignments[0], alignments[1]));
         }
 
+        // save alignment to file
         {
             String fileDir = new File(filePath).getParent();
             saveToFile(fileDir, OUTPUT_FILE_NAME, alignmentResult);

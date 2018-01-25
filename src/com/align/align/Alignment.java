@@ -79,7 +79,7 @@ public class Alignment {
         final int lengthOne = nucleotideSeqOne.length();
         final int lengthTwo = nucleotideSeqTwo.length();
 
-        // Init Matrix
+        // Init Matrix --------------------------------------------------------
         int[][] score = new int[lengthOne + 1][lengthTwo + 1];
         int[][] scoreArg = new int[lengthOne + 1][lengthTwo + 1];
 
@@ -97,38 +97,42 @@ public class Alignment {
         }
 
 
-        int maxScoreMatrix = Integer.MIN_VALUE, iMaxScoreMatrix = -1, jMaxScoreMatrix = -1;
+        int maxScoreMatrix = Integer.MIN_VALUE; // hold for start backtrace in case of local alignment
+        int iMaxScoreMatrix = -1;
+        int jMaxScoreMatrix = -1;
 
-        // fill / Iterate Matrix
+        // fill / Iterate Matrix -----------------------------------------------
         for (int i = 1; i < lengthOne + 1; i++) {
             for (int j = 1; j < lengthTwo + 1; j++) {
 
                 // find max
-                int maxScore = local ? 0 : Integer.MIN_VALUE;
-                int maxArg = local ? 3 : -1;
+                int maxScore = local ? 0 : Integer.MIN_VALUE; // local alignment fourth case
+                int maxArg = local ? 3 : -1;  // local alignment fourth case
 
                 for (int k = 0; k < SHIFTS.length; k++) {
                     int[] s = SHIFTS[k];
 
-                    int scoreOrGap;
+                    int scoreOrGapPenalty;
                     if (k == 0)
-                        scoreOrGap = substiMatrix[AlignmentMain.aminoToIndex(nucleotideSeqOne.charAt(i - 1))][AlignmentMain.aminoToIndex(nucleotideSeqTwo.charAt(j - 1))];
+                        scoreOrGapPenalty = substiMatrix[AlignmentMain.aminoToIndex(nucleotideSeqOne.charAt(i - 1))][AlignmentMain.aminoToIndex(nucleotideSeqTwo.charAt(j - 1))];
                     else
-                        scoreOrGap = -1 * gapPenalty;
+                        scoreOrGapPenalty = -1 * gapPenalty;
 
-                    int currentScore = score[i - s[0]][j - s[1]] + scoreOrGap;
+                    int currentScore = score[i - s[0]][j - s[1]] + scoreOrGapPenalty;
                     if (currentScore > maxScore) {
                         maxScore = currentScore;
                         maxArg = k;
                     }
                 }
 
+                // update max score
                 if (maxScore > maxScoreMatrix) {
                     maxScoreMatrix = maxScore;
                     iMaxScoreMatrix = i;
                     jMaxScoreMatrix = j;
                 }
 
+                // fill matrix
                 score[i][j] = maxScore;
                 scoreArg[i][j] = maxArg;
             }
@@ -137,7 +141,7 @@ public class Alignment {
         final long totalScore = score[lengthOne][lengthTwo];
         score = null; // no reference missing -> allow garbage collector to trash
 
-        // Backtrace
+        // Backtrace ------------------------------------------------------
         final StringBuilder alignmentOne = new StringBuilder();
         final StringBuilder alignmentTwo = new StringBuilder();
         {
@@ -179,8 +183,6 @@ public class Alignment {
                 }
             }
         }
-
-        // finalize
 
         return new AlignmentResult(sequences, totalScore, new String[]{alignmentOne.toString(), alignmentTwo.toString()});
     }

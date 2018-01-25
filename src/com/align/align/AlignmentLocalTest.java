@@ -18,10 +18,11 @@ import static org.junit.runners.Parameterized.Parameters;
 public class AlignmentLocalTest extends AlignmentTestTemplate {
 
     /**
-     * Parameter
+     * Parameter mit Resultaten  der Testfaelle
      *
-     * @return Liste mit Parametern
+     * @return Liste mit Parametern und Resultaten der Testfaelle
      */
+    //seqOne, seqTwo, resultOne, resultTwo, gapPenalty
     @Parameters
     public static Collection<Object[]> data() {
         Object[][] data = new Object[][]{
