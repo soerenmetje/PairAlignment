@@ -12,18 +12,65 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.util.List;
 
+/**
+ * Ausfuehrbare Klasse. Berechnet mittels {@link Alignment} ein Alignment.
+ * Die auf der Komandozeile uebergebenen Argumente werden mittels {@link ArgumentParser} geparset.
+ * Die Sequnezen werden aus der angegebenen Datei mittels {@link FastaParser} eingelesen.
+ * Die Substitutions-Matrix BLOSUM62 wird mittels {@link SubstiMatrixParser} eingelesen.
+ *
+ * @author Soeren Metje
+ */
 public class AlignmentMain {
 
+    /**
+     * Standart-Substitutions-Matrix
+     */
+    public static final int[][] SUBSTI_MATRIX_DEFAULT = {
+            {11, -3, -2, -3, -3, -2, -4, 2, -2, 1, -3, -4, -2, -3, -4, -1, -2, -3, -3, -2},
+            {-3, 4, 0, -2, -3, -2, -2, -1, -3, -1, -2, -3, -1, 0, -3, 1, 1, -2, 3, -3},
+            {-2, 0, 5, 1, -1, -1, -1, -2, -2, -2, -1, -1, -1, 0, 0, -1, -1, -1, -1, -2},
+            {-3, -2, 1, 4, -1, 0, -1, -2, 0, -2, 0, 0, -1, 1, 1, -1, -2, 0, -2, -1},
+            {-3, -3, -1, -1, 5, 1, -2, -2, -2, -3, 0, -2, -3, -1, 0, -1, -2, 2, -3, 0},
+            {-2, -2, -1, 0, 1, 5, -1, -1, -2, -3, 2, 0, -3, -1, 0, 0, -2, 1, -3, 0},
+            {-4, -2, -1, -1, -2, -1, 7, -3, -2, -4, -1, -1, -3, -1, -2, -2, -3, -1, -3, -2},
+            {2, -1, -2, -2, -2, -1, -3, 7, -3, 3, -2, -3, -2, -2, -2, -1, -1, -2, -1, 2},
+            {-2, -3, -2, 0, -2, -2, -2, -3, 6, -3, -2, -1, -3, 0, 0, -3, -4, -2, -4, -2},
+            {1, -1, -2, -2, -3, -3, -4, 3, -3, 6, -3, -3, -2, -2, -3, 0, 0, -3, 0, -1},
+            {-3, -2, -1, 0, 0, 2, -1, -2, -2, -3, 5, 2, -4, -1, 0, -2, -3, 1, -3, 0},
+            {-4, -3, -1, 0, -2, 0, -1, -3, -1, -3, 2, 6, -3, -2, 1, -3, -4, -1, -3, -1},
+            {-2, -1, -1, -1, -3, -3, -3, -2, -3, -2, -4, -3, 9, 0, -3, -1, -1, -3, -1, -3},
+            {-3, 0, 0, 1, -1, -1, -1, -2, 0, -2, -1, -2, 0, 4, -2, -1, -1, -1, -1, -2},
+            {-4, -3, 0, 1, 0, 0, -2, -2, 0, -3, 0, 1, -3, -2, 6, -2, -3, 0, -3, 1},
+            {-1, 1, -1, -1, -1, 0, -2, -1, -3, 0, -2, -3, -1, -1, -2, 5, 2, -1, 1, -2},
+            {-2, 1, -1, -2, -2, -2, -3, -1, -4, 0, -3, -4, -1, -1, -3, 2, 4, -2, 2, -3},
+            {-3, -2, -1, 0, 2, 1, -1, -2, -2, -3, 1, -1, -3, -1, 0, -1, -2, 5, -3, -1},
+            {-3, 3, -1, -2, -3, -3, -3, -1, -4, 0, -3, -3, -1, -1, -3, 1, 2, -3, 4, -3},
+            {-2, -3, -2, -1, 0, 0, -2, 2, -2, -1, 0, -1, -3, -2, 1, -2, -3, -1, -3, 8}};
+
+    /**
+     * Daeiname der Ausgabe-Datei fuer das Alignment
+     */
+    private static final String OUTPUT_FILE_NAME = "alignment%s.fasta"; // %s to add information
+
+    /**
+     * Kuerzel der Aminosaeueren
+     */
     private static final char[] AMIN = new char[]{'W', 'V', 'T', 'S', 'R', 'Q', 'P', 'Y', 'G', 'F', 'E', 'D', 'C', 'A', 'N', 'M', 'L', 'K', 'I', 'H'};
+    /**
+     * Anzahl der Aminosaeuren
+     */
     public static final int AMIN_COUNT = AMIN.length;
 
-    private static int[][] substiMatrix;
-
+    /**
+     * Ausfuehrbare Methode
+     *
+     * @param args Argumente
+     */
     public static void main(String[] args) {
         // set up Parameter
         final ParameterSet parameterSet = new ParameterSet();
         final Setting paramFilePath = new Setting("file", true);
-        final Setting paramFilePathSub = new Setting("filesub", true);
+        final Setting paramFilePathSub = new Setting("filesub", false);
         final Setting paramGap = new Setting("gap", true);
         final Flag paramTypeLocal = new Flag("local", false);
         Flag paramInfo = new Flag("info", false);
@@ -59,29 +106,27 @@ public class AlignmentMain {
             System.exit(1);
         }
 
-        try {
-            substiMatrix = SubstiMatrixParser.parseFile(paramFilePathSub.getValue());
-        } catch (IOException | IllegalArgumentException e) {
-            Log.eLine("ERROR: while parsing substitution matrix " + e.getMessage());
-            System.exit(1);
+        int[][] substiMatrix = null;
+        if (!paramFilePathSub.isSet()) {
+            substiMatrix = SUBSTI_MATRIX_DEFAULT;
         }
-
-        // output substitution Matrix
-        {
-            StringBuilder out = new StringBuilder("Substitution Matrix:\n");
-            for (int i = 0; i < substiMatrix.length; i++) {
-                out.append(AMIN[i]).append(":  ");
-                for (int j = 0; j < substiMatrix[i].length; j++) {
-                    out.append(String.format("%3d", substiMatrix[i][j]));
-                }
-                out.append('\n');
+        // path passed -> reading substitution matrix
+        else {
+            String filePath = paramFilePathSub.getValue();
+            System.out.println("reading " + filePath);
+            try {
+                substiMatrix = SubstiMatrixParser.parseFile(filePath);
+                System.out.println("successfully finished reading file");
+            } catch (IOException | IllegalArgumentException e) {
+                System.err.println("ERROR: while parsing substitution matrix " + e.getMessage());
+                System.exit(1);
             }
-            Log.dLine(out.toString());
         }
 
+        // read Sequences
+        final String filePath = paramFilePath.getValue();
         Sequence[] sequences;
         {
-            final String filePath = paramFilePath.getValue();
             List<Sequence> sequenceList = readFile(filePath);
             int seqCount = sequenceList.size();
             if (seqCount != 2) {
@@ -96,6 +141,7 @@ public class AlignmentMain {
             }
         }
 
+        // calc optimal alignment
         AlignmentResult alignmentResult = null;
         try {
             boolean local = paramTypeLocal.isSet();
@@ -105,14 +151,21 @@ public class AlignmentMain {
             System.exit(1);
         }
 
-
+        // output alignment
         {
             long score = alignmentResult.getScore();
             String[] alignments = alignmentResult.getAlignments();
-            System.out.println(String.format("Optimal alignment: \nscore = %d\n%s\n%s", score, alignments[0], alignments[1]));
+            System.out.println(String.format("\nOptimal alignment: \nscore = %d\n%s\n%s", score, alignments[0], alignments[1]));
         }
     }
 
+    /**
+     * Liesst Datei an uebergebenem Pfad mittels {@link FastaParser} ein und liefert eine Liste mit den eingelesenen Sequenzen zurueck.
+     * Bei einem Fehler wird die VM beendet.
+     *
+     * @param filePath Datei-Pfad
+     * @return Liste mit den eingelesenen Sequenzen
+     */
     private static List<Sequence> readFile(final String filePath) {
         List<Sequence> ret = null;
 

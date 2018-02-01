@@ -1,4 +1,6 @@
-package com.align;
+package com.align.substiparser;
+
+import com.align.AlignmentMain;
 
 import java.io.BufferedReader;
 import java.io.File;
@@ -6,13 +8,21 @@ import java.io.FileReader;
 import java.io.IOException;
 
 /**
- * Parser, der die Datei BLOSUM62 parset.
+ * Parser, der die Datei BLOSUM62 parset. Erstellt anhand der Datei eine Substitutuions-Matrix.
  *
  * @author Soeren Metje
  */
 public class SubstiMatrixParser {
 
-
+    /**
+     * Liesst Datei an uebergebenen Pfad ein. Fuellt anhand der Daten die Substitutuions-Matrix und liefert sie zurueck.
+     *
+     * @param filePath Datei-Pfad
+     * @return Substitutuions-Matrix
+     * @throws IllegalArgumentException Falls filePath == null
+     *                                  oder fallsangegebene Aminosaeure nicht im Feld gefunden wird
+     * @throws IOException              Falls beim Einlesen ein Fahler auftritt
+     */
     public static int[][] parseFile(String filePath) throws IllegalArgumentException, IOException {
         if (filePath == null)
             throw new IllegalArgumentException("filePath is null");

@@ -10,13 +10,19 @@ import java.util.Collection;
 import static org.junit.runners.Parameterized.Parameters;
 
 /**
- * Test-Klasse fuer das locale Alignment der Klasse {@link Alignment}.
+ * Test-Klasse fuer das lokale Alignment der Klasse {@link Alignment}.
  *
  * @author Soeren Metje
  */
 @RunWith(Parameterized.class)
 public class AlignmentLocalTest extends AlignmentTestTemplate {
 
+    /**
+     * Parameter mit Resultaten  der Testfaelle
+     *
+     * @return Liste mit Parametern und Resultaten der Testfaelle
+     */
+    //seqOne, seqTwo, resultOne, resultTwo, gapPenalty
     @Parameters
     public static Collection<Object[]> data() {
         Object[][] data = new Object[][]{
@@ -30,11 +36,17 @@ public class AlignmentLocalTest extends AlignmentTestTemplate {
         return Arrays.asList(data);
     }
 
+    /**
+     * Test fuer erste Sequenz
+     */
     @Test
     public void testAlignLocalOne() {
         testAlign(seqOne, seqTwo, gapPenalty, true, resultOne, 0);
     }
 
+    /**
+     * Test fuer zweite Sequenz
+     */
     @Test
     public void testAlignLocalTwo() {
         testAlign(seqOne, seqTwo, gapPenalty, true, resultTwo, 1);
