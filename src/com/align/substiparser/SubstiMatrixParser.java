@@ -1,6 +1,6 @@
 package com.align.substiparser;
 
-import com.align.AlignmentMain;
+import com.align.AlignmentsMain;
 
 import java.io.BufferedReader;
 import java.io.File;
@@ -29,7 +29,7 @@ public class SubstiMatrixParser {
 
         File file = new File(filePath);
 
-        int[][] substiMatrix = new int[AlignmentMain.AMIN_COUNT][AlignmentMain.AMIN_COUNT];
+        int[][] substiMatrix = new int[AlignmentsMain.AMIN_COUNT][AlignmentsMain.AMIN_COUNT];
 
         try (BufferedReader bufferedReader = new BufferedReader(new FileReader(file))) { // closes reader
 
@@ -45,7 +45,7 @@ public class SubstiMatrixParser {
 
                 int score = Integer.parseInt(line);
 
-                substiMatrix[AlignmentMain.aminoToIndex(aminoFrom)][AlignmentMain.aminoToIndex(aminoTo)] = score;
+                substiMatrix[AlignmentsMain.aminoToIndex(aminoFrom)][AlignmentsMain.aminoToIndex(aminoTo)] = score;
             }
         }
         return substiMatrix;

@@ -1,6 +1,6 @@
 package com.align.align;
 
-import com.align.AlignmentMain;
+import com.align.AlignmentsMain;
 import com.align.fastaparser.Sequence;
 
 /**
@@ -114,7 +114,7 @@ public class Alignments {
 
                     int scoreOrGapPenalty;
                     if (k == 0)
-                        scoreOrGapPenalty = substiMatrix[AlignmentMain.aminoToIndex(nucleotideSeqOne.charAt(i - 1))][AlignmentMain.aminoToIndex(nucleotideSeqTwo.charAt(j - 1))];
+                        scoreOrGapPenalty = substiMatrix[AlignmentsMain.aminoToIndex(nucleotideSeqOne.charAt(i - 1))][AlignmentsMain.aminoToIndex(nucleotideSeqTwo.charAt(j - 1))];
                     else
                         scoreOrGapPenalty = -1 * gapPenalty;
 

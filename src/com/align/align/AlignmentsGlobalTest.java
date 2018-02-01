@@ -15,7 +15,7 @@ import static org.junit.runners.Parameterized.Parameters;
  * @author Soeren Metje
  */
 @RunWith(Parameterized.class)
-public class AlignmentsGlobalTest extends AlignmentTestTemplate {
+public class AlignmentsGlobalTest extends AlignmentsTestTemplate {
 
     /**
      * Parameter mit Resultaten  der Testfaelle

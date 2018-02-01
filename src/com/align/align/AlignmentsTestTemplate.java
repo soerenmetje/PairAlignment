@@ -1,6 +1,6 @@
 package com.align.align;
 
-import com.align.AlignmentMain;
+import com.align.AlignmentsMain;
 import com.align.fastaparser.Sequence;
 import org.junit.Assert;
 
@@ -11,7 +11,7 @@ import static org.junit.runners.Parameterized.Parameter;
  *
  * @author Soeren Metje
  */
-public abstract class AlignmentTestTemplate {
+public abstract class AlignmentsTestTemplate {
 
     /**
      * Parameter erste Sequenz
@@ -72,6 +72,6 @@ public abstract class AlignmentTestTemplate {
         sequences[0] = new Sequence("one", null, seqOne);
         sequences[1] = new Sequence("two", null, seqTwo);
 
-        return Alignments.align(local, sequences, gapPenalty, AlignmentMain.SUBSTI_MATRIX_DEFAULT);
+        return Alignments.align(local, sequences, gapPenalty, AlignmentsMain.SUBSTI_MATRIX_DEFAULT);
     }
 }

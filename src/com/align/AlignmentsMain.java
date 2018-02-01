@@ -21,7 +21,7 @@ import java.util.List;
  *
  * @author Soeren Metje
  */
-public class AlignmentMain {
+public class AlignmentsMain {
 
     /**
      * Standart-Substitutions-Matrix
