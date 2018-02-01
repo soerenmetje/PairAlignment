@@ -3,8 +3,10 @@ package com.align.align;
 import com.align.fastaparser.Sequence;
 
 /**
- * Rusultat der align Methoden in {@link Alignment}.
- * Beihaltet sequenzen und das Alignment, sowie den Score
+ * Rusultat der align Methoden in {@link Alignments}.
+ * Beihaltet Sequenzen und das Alignment, sowie den Score
+ *
+ * @author Soeren Metje
  */
 public class AlignmentResult {
 
@@ -12,10 +14,12 @@ public class AlignmentResult {
      * Sequenzen
      */
     private final Sequence[] sequences;
+
     /**
      * score des Alignments
      */
     private final long score;
+
     /**
      * Alignments
      */

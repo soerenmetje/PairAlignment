@@ -1,7 +1,7 @@
 package com.align;
 
-import com.align.align.Alignment;
 import com.align.align.AlignmentResult;
+import com.align.align.Alignments;
 import com.align.argparser.*;
 import com.align.fastaparser.FastaParser;
 import com.align.fastaparser.FastaParserException;
@@ -14,7 +14,7 @@ import java.io.IOException;
 import java.util.List;
 
 /**
- * Ausfuehrbare Klasse. Berechnet mittels {@link Alignment} ein Alignment.
+ * Ausfuehrbare Klasse. Berechnet mittels {@link Alignments} ein Alignment.
  * Die auf der Komandozeile uebergebenen Argumente werden mittels {@link ArgumentParser} geparset.
  * Die Sequnezen werden aus der angegebenen Datei mittels {@link FastaParser} eingelesen.
  * Die Substitutions-Matrix BLOSUM62 wird mittels {@link SubstiMatrixParser} eingelesen.
@@ -138,7 +138,7 @@ public class AlignmentMain {
         AlignmentResult alignmentResult = null;
         try {
             boolean local = paramTypeLocal.isSet();
-            alignmentResult = Alignment.align(local, sequences, gapPenalty, substiMatrix);
+            alignmentResult = Alignments.align(local, sequences, gapPenalty, substiMatrix);
         } catch (IllegalArgumentException e) {
             Log.eLine("ERROR: alignment failed. " + e.getMessage());
             System.exit(1);
@@ -182,9 +182,9 @@ public class AlignmentMain {
     }
 
     /**
-     * Mappt Aminosaeure auf entsprechenden Index
+     * Mappt Aminosaeure-Kuerzel auf entsprechenden Index
      *
-     * @param amino Aminosaeure
+     * @param amino Aminosaeure-Kuerzel
      * @return entsprechender Index
      * @throws IllegalArgumentException falls Beobachtung nicht im Feld gefunden wird
      */

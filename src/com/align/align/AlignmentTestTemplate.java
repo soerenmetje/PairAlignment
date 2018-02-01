@@ -7,7 +7,7 @@ import org.junit.Assert;
 import static org.junit.runners.Parameterized.Parameter;
 
 /**
- * Test-Klassen-Vorlage fuer {@link AlignmentGlobalTest} und {@link AlignmentLocalTest} zum testen der Klasse {@link Alignment}.
+ * Test-Klassen-Vorlage fuer {@link AlignmentsGlobalTest} und {@link AlignmentsLocalTest} zum testen der Klasse {@link Alignments}.
  *
  * @author Soeren Metje
  */
@@ -63,6 +63,6 @@ public abstract class AlignmentTestTemplate {
         sequences[0] = new Sequence("one", null, seqOne);
         sequences[1] = new Sequence("two", null, seqTwo);
 
-        return Alignment.align(local, sequences, gapPenalty, AlignmentMain.SUBSTI_MATRIX_DEFAULT);
+        return Alignments.align(local, sequences, gapPenalty, AlignmentMain.SUBSTI_MATRIX_DEFAULT);
     }
 }

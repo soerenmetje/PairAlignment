@@ -10,12 +10,12 @@ import java.util.Collection;
 import static org.junit.runners.Parameterized.Parameters;
 
 /**
- * Test-Klasse fuer das lokale Alignment der Klasse {@link Alignment}.
+ * Test-Klasse fuer das globale Alignment der Klasse {@link Alignments}.
  *
  * @author Soeren Metje
  */
 @RunWith(Parameterized.class)
-public class AlignmentLocalTest extends AlignmentTestTemplate {
+public class AlignmentsGlobalTest extends AlignmentTestTemplate {
 
     /**
      * Parameter mit Resultaten  der Testfaelle
@@ -26,9 +26,9 @@ public class AlignmentLocalTest extends AlignmentTestTemplate {
     @Parameters
     public static Collection<Object[]> data() {
         Object[][] data = new Object[][]{
-                {"GSAQVKGHGKKVADALTNAVAHVDDMPNALSALSDLHAHKL", "GNPKVKAHGKKVLGAFSDGLAHLDNLKGTFATLSELHCDKL", "GSAQVKGHGKKV--A--DALTNAVAHVDDMPNAL--S-A-LSDLHAHKL", "GNPKVKAHGKKVLGAFSDGL----AHL-D--N-LKGTFATLSELHCDKL", 1},
+                {"GSAQVKGHGKKVADALTNAVAHVDDMPNALSALSDLHAHKL", "GNPKVKAHGKKVLGAFSDGLAHLDNLKGTFATLSELHCDKL", "GSAQVKGHGKKV--A--DALTNAVAHVDDMPNAL--S-A-LSDLHAHKL", "GNPKVKAHGKKVLGAFSDGL----AHLD---N-LKGTFATLSELHCDKL", 1},
                 {"GSAQVKGHGKKVADALTNAVAHVDDMPNALSALSDLHAHKL", "GNPKVKAHGKKVLGAFSDGLAHLDNLKGTFATLSELHCDKL", "GSAQVKGHGKKVADALTNAVAHVDDMPNALSALSDLHAHKL", "GNPKVKAHGKKVLGAFSDGLAHLDNLKGTFATLSELHCDKL", 5},
-                {"VKGHGKKVADALTNAVAHVDDMPNALSALSDLHAHKL", "GSAQVKGHGKKVAKALTNAVAHVDDMPNALSA", "VKGHGKKVADALTNAVAHVDDMPNALSA", "VKGHGKKVAKALTNAVAHVDDMPNALSA", 1}, // remove at start and end and 1 substitution
+                {"VKGHGKKVADALTNAVAHVDDMPNALSALSDLHAHKL", "GSAQVKGHGKKVAKALTNAVAHVDDMPNALSA", "----VKGHGKKVADALTNAVAHVDDMPNALSALSDLHAHKL", "GSAQVKGHGKKVAKALTNAVAHVDDMPNALSA---------", 1}, // insert gaps at start and end
                 {"FSCQCAPGYTGARCETNIDDCLGEIKCQNNA", "FSCQCAPGYTGARCETNIDDCLGEIKCQNNA", "FSCQCAPGYTGARCETNIDDCLGEIKCQNNA", "FSCQCAPGYTGARCETNIDDCLGEIKCQNNA", 1}, // same seq
                 {"FSCQCAPGYTGARCETNIDDCLGEIKCQNNATCIDGVESYKCECQPGFSGEFCDTKIQFC", "YKCECPRGFYDAHCLSDVDECASNPCVNEGRCEDGINEFICHCPPGYTGKRCELDIDEC", "FSCQCAP-G-YTGARCE-TNIDDCLGEIKCQNNATCI-DGV-ESYK-CECQPGFSGEF-C--DTKI-QFC", "YKCEC-PRGFY-DAHC-LSDVDECASN-PCVNEGRC-EDGINE-F-ICHCPPGYTGK-RCELD--IDE-C", 1},
                 {"FSCQCAPGYTGARCETNIDDCLGEIKCQNNATCIDGVESYKCECQPGFSGEFCDTKIQFC", "YKCECPRGFYDAHCLSDVDECASNPCVNEGRCEDGINEFICHCPPGYTGKRCELDIDEC", "FSCQCAPGYTGARCETNIDDCLGEIKCQNNATCIDGVESYKCECQPGFSGEFCDTKIQFC", "YKCECPRGFYDAHCLSDVDECASN-PCVNEGRCEDGINEFICHCPPGYTGKRCELDIDEC", 5}
@@ -40,15 +40,15 @@ public class AlignmentLocalTest extends AlignmentTestTemplate {
      * Test fuer erste Sequenz
      */
     @Test
-    public void testAlignLocalOne() {
-        testAlign(seqOne, seqTwo, gapPenalty, true, resultOne, 0);
+    public void testAlignGlobalOne() {
+        testAlign(seqOne, seqTwo, gapPenalty, false, resultOne, 0);
     }
 
     /**
      * Test fuer zweite Sequenz
      */
     @Test
-    public void testAlignLocalTwo() {
-        testAlign(seqOne, seqTwo, gapPenalty, true, resultTwo, 1);
+    public void testAlignGlobalTwo() {
+        testAlign(seqOne, seqTwo, gapPenalty, false, resultTwo, 1);
     }
 }

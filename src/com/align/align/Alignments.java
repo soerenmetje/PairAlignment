@@ -11,7 +11,7 @@ import com.align.fastaparser.Sequence;
  *
  * @author Soeren Metje
  */
-public class Alignment {
+public class Alignments {
 
     /**
      * Versatz-Kombinationen (bei der suche des Maximums) erster wert ist i, zweite j
@@ -59,7 +59,7 @@ public class Alignment {
      * @param gapPenalty   score-Abzug fuer Gaps
      * @param substiMatrix Substitutuions-Matrix
      * @return optimales Alignment
-     * @throws IllegalArgumentException
+     * @throws IllegalArgumentException falls Beobachtung nicht im Feld gefunden wird
      */
     public static AlignmentResult align(final boolean local, final Sequence[] sequences, final int gapPenalty, final int[][] substiMatrix) throws IllegalArgumentException {
         if (sequences == null)
