@@ -58,6 +58,15 @@ public abstract class AlignmentTestTemplate {
         Assert.assertEquals(result, alignments[pos]);
     }
 
+    /**
+     * erstellt mittels {@link Alignments} ein {@link AlignmentResult} anhand uebergebener Parameter und liefert es zurueck.
+     *
+     * @param seqOne     erste Sequenz
+     * @param seqTwo     zweite Sequenz
+     * @param gapPenalty Gap-Penalty
+     * @param local      lokales oder globales Alignment
+     * @return AlignmentResult
+     */
     static AlignmentResult align(String seqOne, String seqTwo, int gapPenalty, boolean local) {
         Sequence[] sequences = new Sequence[2];
         sequences[0] = new Sequence("one", null, seqOne);

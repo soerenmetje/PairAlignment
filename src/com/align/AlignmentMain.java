@@ -52,6 +52,7 @@ public class AlignmentMain {
      * Kuerzel der Aminosaeueren
      */
     private static final char[] AMIN = new char[]{'W', 'V', 'T', 'S', 'R', 'Q', 'P', 'Y', 'G', 'F', 'E', 'D', 'C', 'A', 'N', 'M', 'L', 'K', 'I', 'H'};
+
     /**
      * Anzahl der Aminosaeuren
      */
@@ -101,6 +102,7 @@ public class AlignmentMain {
 
         int[][] substiMatrix = null;
         if (!paramFilePathSub.isSet()) {
+            Log.iLine("hardcoded substitution-matrix is used");
             substiMatrix = SUBSTI_MATRIX_DEFAULT;
         }
         // path passed -> reading substitution matrix
