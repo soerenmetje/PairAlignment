@@ -7,6 +7,7 @@ import com.align.fastaparser.FastaParser;
 import com.align.fastaparser.FastaParserException;
 import com.align.fastaparser.Sequence;
 import com.align.logger.Log;
+import com.align.substiparser.SubstiMatrixParser;
 
 import java.io.FileNotFoundException;
 import java.io.IOException;
@@ -48,11 +49,6 @@ public class AlignmentMain {
             {-2, -3, -2, -1, 0, 0, -2, 2, -2, -1, 0, -1, -3, -2, 1, -2, -3, -1, -3, 8}};
 
     /**
-     * Daeiname der Ausgabe-Datei fuer das Alignment
-     */
-    private static final String OUTPUT_FILE_NAME = "alignment%s.fasta"; // %s to add information
-
-    /**
      * Kuerzel der Aminosaeueren
      */
     private static final char[] AMIN = new char[]{'W', 'V', 'T', 'S', 'R', 'Q', 'P', 'Y', 'G', 'F', 'E', 'D', 'C', 'A', 'N', 'M', 'L', 'K', 'I', 'H'};
@@ -74,13 +70,11 @@ public class AlignmentMain {
         final Setting paramGap = new Setting("gap", true);
         final Flag paramTypeLocal = new Flag("local", false);
         Flag paramInfo = new Flag("info", false);
-        Flag paramDebug = new Flag("debug", false);
         parameterSet.addSetting(paramFilePath);
         parameterSet.addSetting(paramFilePathSub);
         parameterSet.addSetting(paramGap);
         parameterSet.addFlag(paramTypeLocal);
         parameterSet.addFlag(paramInfo);
-        parameterSet.addFlag(paramDebug);
 
         try {
             ArgumentParser parser = new ArgumentParser(parameterSet);
@@ -92,7 +86,6 @@ public class AlignmentMain {
 
         // setup logger
         Log.setPrintInfo(paramInfo.isSet());
-        Log.setPrintDebug(paramDebug.isSet());
 
         int gapPenalty = 0;
         try {
@@ -113,12 +106,12 @@ public class AlignmentMain {
         // path passed -> reading substitution matrix
         else {
             String filePath = paramFilePathSub.getValue();
-            System.out.println("reading " + filePath);
+            Log.iLine("reading " + filePath);
             try {
                 substiMatrix = SubstiMatrixParser.parseFile(filePath);
-                System.out.println("successfully finished reading file");
+                Log.iLine("successfully finished reading file");
             } catch (IOException | IllegalArgumentException e) {
-                System.err.println("ERROR: while parsing substitution matrix " + e.getMessage());
+                Log.eLine("ERROR: while parsing substitution matrix " + e.getMessage());
                 System.exit(1);
             }
         }
@@ -155,7 +148,8 @@ public class AlignmentMain {
         {
             long score = alignmentResult.getScore();
             String[] alignments = alignmentResult.getAlignments();
-            System.out.println(String.format("\nOptimal alignment: \nscore = %d\n%s\n%s", score, alignments[0], alignments[1]));
+            Log.iLine("\nOptimal alignment:");
+            System.out.println(String.format("score = %d\n%s\n%s", score, alignments[0], alignments[1]));
         }
     }
 
